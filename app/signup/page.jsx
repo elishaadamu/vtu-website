@@ -1,5 +1,4 @@
 "use client";
-import { assets } from "@/assets/assets";
 import Image from "next/image";
 import Logo from "@/assets/logo/logo.png";
 

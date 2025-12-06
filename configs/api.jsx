@@ -33,7 +33,17 @@ export const API_CONFIG = {
       CREATE: "/verify/bvn",
       DATA_HISTORY: "/transactions/dataHistory/", // append userId
     },
+    SECURITY: {
+      SET_PIN: "/wallet/set-pin",
+      UPDATE_PIN: "/wallet/changePin",
+      CHANGE_PASSWORD: "/security/change-password",
+      RESET_PASSWORD: "/security/reset-password",
+    },
+    FETCH_PRICES: {
+      PRICES: "/transactions/prices",
+    }
   },
+
 };
 
 export const apiUrl = (endpoint) => `${API_CONFIG.BASE_URL}${endpoint}`;

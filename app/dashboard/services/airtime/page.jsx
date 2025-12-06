@@ -28,7 +28,7 @@ const AirtimePage = () => {
       try {
         const response = await axios.get(
           apiUrl(
-            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + userId + "/balance"
+            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
           )
         );
         setWalletBalance(response.data?.wallet?.balance || 0);

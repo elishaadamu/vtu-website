@@ -30,6 +30,8 @@ const BvnVerificationPage = () => {
   const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [priceLoading, setPriceLoading] = useState(false);
+  const [agentPrices, setAgentPrices] = useState([]);
 
   const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
@@ -41,7 +43,7 @@ const BvnVerificationPage = () => {
 
       try {
         const response = await axios.get(
-          apiUrl(`${API_CONFIG.ENDPOINTS.ACCOUNT.WALLET_BALANCE}${userId}`)
+          apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
       } catch (error) {
@@ -51,6 +53,49 @@ const BvnVerificationPage = () => {
 
     fetchWalletBalance();
   }, [userData]);
+
+  // Fetch prices from API
+  useEffect(() => {
+    const fetchPrices = async () => {
+      setPriceLoading(true);
+      try {
+        const response = await axios.get(
+          apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
+        );
+        console.log("API Prices Response:", response.data);
+        
+        // Find BVN pricing
+        const bvnPricingData = Array.isArray(response.data)
+          ? response.data.find((item) => item.key === "bvn")
+          : response.data;
+
+        const bvnPricing =
+          bvnPricingData?.key === "bvn" ? bvnPricingData : null;
+
+        if (bvnPricing && bvnPricing.prices) {
+          // Update slipTypes with new prices
+          const updatedSlipTypes = slipTypes.map((slip) => ({
+            ...slip,
+            price: `₦${bvnPricing.prices.agent}`,
+          }));
+
+          setAgentPrices(updatedSlipTypes);
+        } else {
+          // If no pricing data, use default slipTypes
+          setAgentPrices(slipTypes);
+        }
+      } catch (error) {
+        console.error("Error fetching API prices:", error);
+        message.error("Failed to fetch current prices");
+        // Use default slipTypes on error
+        setAgentPrices(slipTypes);
+      } finally {
+        setPriceLoading(false);
+      }
+    };
+
+    fetchPrices();
+  }, []);
 
   const handlePinChange = (index, value) => {
     if (value.length > 1) return; // Only allow 1 digit
@@ -87,7 +132,8 @@ const BvnVerificationPage = () => {
     }
 
     // Find the selected slip to get the price
-    const selectedSlipData = slipTypes.find((s) => s.id === selectedSlip);
+    const currentSlipTypes = agentPrices.length > 0 ? agentPrices : slipTypes;
+    const selectedSlipData = currentSlipTypes.find((s) => s.id === selectedSlip);
     const slipAmount = selectedSlipData
       ? parseInt(selectedSlipData.price.replace(/[₦,]/g, ""))
       : 0;
@@ -170,7 +216,7 @@ const BvnVerificationPage = () => {
           console.log("Payload for BVN verification:", payload);
 
           const response = await axios.post(
-            apiUrl(API_CONFIG.BVN_VERIFICATION.CREATE),
+            apiUrl(API_CONFIG.ENDPOINTS.BVN_VERIFICATION.CREATE),
             payload
           );
 
@@ -186,7 +232,7 @@ const BvnVerificationPage = () => {
 
           // Refresh wallet balance after successful transaction
           const balanceResponse = await axios.get(
-            apiUrl(`${API_CONFIG.ENDPOINTS.ACCOUNT.WALLET_BALANCE}${userId}`)
+            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
           );
           setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
 
@@ -252,7 +298,7 @@ const BvnVerificationPage = () => {
           <div>
             <p className="text-xs text-gray-400 font-medium">Wallet Balance</p>
             <p className="text-lg font-bold">
-              ₦ {walletBalance.toLocaleString()}
+              ₦ {walletBalance.toFixed(2)}
             </p>
           </div>
         </div>
@@ -293,7 +339,7 @@ const BvnVerificationPage = () => {
               Select Slip Type
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-8 max-w-2xl mx-auto">
-              {slipTypes.map((slip) => (
+              {(agentPrices.length > 0 ? agentPrices : slipTypes).map((slip) => (
                 <div
                   key={slip.id}
                   onClick={() => setSelectedSlip(slip.id)}

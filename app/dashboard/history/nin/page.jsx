@@ -53,7 +53,9 @@ export default function NINVerificationHistory() {
 
     setLoading(true);
     try {
-      const apiLink = apiUrl(API_CONFIG.NIN_VERIFICATION.DATA_HISTORY + userId);
+      const apiLink = apiUrl(
+        API_CONFIG.ENDPOINTS.NIN_VERIFICATION.DATA_HISTORY + userId
+      );
       const response = await axios.get(apiLink, {
         withCredentials: true,
         headers: {

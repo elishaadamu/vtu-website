@@ -91,7 +91,7 @@ const DataPage = () => {
       try {
         const response = await axios.get(
           apiUrl(
-            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + userId + "/balance"
+            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
           )
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
@@ -103,11 +103,38 @@ const DataPage = () => {
     fetchWalletBalance();
   }, [userData]);
 
-  // Simulate fetching all plans on component mount
+  // Fetch data plans from API
   useEffect(() => {
-    // In a real app, you would fetch this from your backend
-    // e.g., axios.get(apiUrl(API_CONFIG.ENDPOINTS.DATA.plans)).then(res => setPlans(res.data))
-    setPlans(allPlans);
+    const fetchDataPlans = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
+        );
+        console.log("API Prices Response:", response.data);
+        
+        // Find data pricing
+        const dataPricingData = Array.isArray(response.data)
+          ? response.data.find((item) => item.key === "data")
+          : response.data;
+
+        if (dataPricingData && dataPricingData.plans) {
+          // Use plans from API
+          setPlans(dataPricingData.plans);
+        } else {
+          // Fallback to default plans if API doesn't return data plans
+          setPlans(allPlans);
+        }
+      } catch (error) {
+        console.error("Error fetching data plans:", error);
+        // Use default plans on error
+        setPlans(allPlans);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDataPlans();
   }, []);
 
   const handleNetworkSelect = (networkId) => {

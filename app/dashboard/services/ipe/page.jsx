@@ -34,7 +34,7 @@ const IpeVerificationPage = () => {
 
       try {
         const response = await axios.get(
-          apiUrl(`${API_CONFIG.ENDPOINTS.ACCOUNT.WALLET_BALANCE}${userId}`)
+          apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
       } catch (error) {
@@ -191,7 +191,7 @@ const IpeVerificationPage = () => {
 
           // Refresh wallet balance after successful transaction
           const balanceResponse = await axios.get(
-            apiUrl(`${API_CONFIG.ENDPOINTS.ACCOUNT.WALLET_BALANCE}${userId}`)
+            apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
           );
           setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
 

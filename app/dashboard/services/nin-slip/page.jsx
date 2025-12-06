@@ -29,6 +29,8 @@ const NinVerificationPage = () => {
   const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [priceLoading, setPriceLoading] = useState(false);
+  const [agentPrices, setAgentPrices] = useState([]);
 
   const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
@@ -40,7 +42,7 @@ const NinVerificationPage = () => {
 
       try {
         const response = await axios.get(
-          apiUrl(`${API_CONFIG.ENDPOINTS.ACCOUNT.WALLET_BALANCE}${userId}`)
+          apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
       } catch (error) {
@@ -50,6 +52,49 @@ const NinVerificationPage = () => {
 
     fetchWalletBalance();
   }, [userData]);
+
+  // Fetch prices from API
+  useEffect(() => {
+    const fetchPrices = async () => {
+      setPriceLoading(true);
+      try {
+        const response = await axios.get(
+          apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
+        );
+        console.log("API Prices Response:", response.data);
+        
+        // Find NIN pricing
+        const ninPricingData = Array.isArray(response.data)
+          ? response.data.find((item) => item.key === "nin")
+          : response.data;
+
+        const ninPricing =
+          ninPricingData?.key === "nin" ? ninPricingData : null;
+
+        if (ninPricing && ninPricing.prices) {
+          // Update slipTypes with new prices
+          const updatedSlipTypes = slipTypes.map((slip) => ({
+            ...slip,
+            price: `₦${ninPricing.prices.agent}`,
+          }));
+
+          setAgentPrices(updatedSlipTypes);
+        } else {
+          // If no pricing data, use default slipTypes
+          setAgentPrices(slipTypes);
+        }
+      } catch (error) {
+        console.error("Error fetching API prices:", error);
+        message.error("Failed to fetch current prices");
+        // Use default slipTypes on error
+        setAgentPrices(slipTypes);
+      } finally {
+        setPriceLoading(false);
+      }
+    };
+
+    fetchPrices();
+  }, []);
 
   const handlePinChange = (index, value) => {
     if (value.length > 1) return; // Only allow 1 digit
@@ -86,7 +131,8 @@ const NinVerificationPage = () => {
     }
 
     // Find the selected slip to get the price
-    const selectedSlipData = slipTypes.find((s) => s.id === selectedSlip);
+    const currentSlipTypes = agentPrices.length > 0 ? agentPrices : slipTypes;
+    const selectedSlipData = currentSlipTypes.find((s) => s.id === selectedSlip);
     const slipAmount = selectedSlipData
       ? parseInt(selectedSlipData.price.replace(/[₦,]/g, ""))
       : 0;
@@ -169,7 +215,7 @@ const NinVerificationPage = () => {
           console.log("Payload for verification:", payload);
 
           const response = await axios.post(
-            apiUrl(API_CONFIG.NIN_VERIFICATION.CREATE),
+            apiUrl(API_CONFIG.ENDPOINTS.NIN_VERIFICATION.CREATE),
             payload
           );
           console.log(response.data);
@@ -180,7 +226,7 @@ const NinVerificationPage = () => {
 
           // Refresh wallet balance after successful transaction
           const balanceResponse = await axios.get(
-            apiUrl(`${API_CONFIG.ENDPOINTS.ACCOUNT.WALLET_BALANCE}${userId}`)
+            apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
           );
           setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
 
@@ -288,7 +334,7 @@ const NinVerificationPage = () => {
               Select Slip Type
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3  gap-10 md:gap-4">
-              {slipTypes.map((slip) => (
+              {(agentPrices.length > 0 ? agentPrices : slipTypes).map((slip) => (
                 <div
                   key={slip.id}
                   onClick={() => setSelectedSlip(slip.id)}

@@ -171,11 +171,11 @@ const ServicesLayout = () => {
       try {
         const response = await axios.get(
           apiUrl(
-            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + userId + "/balance"
+            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
           )
         );
         console.log("Wallet Balance Response:", response.data);
-        setWalletBalance(response.data?.wallet?.balance || 0);
+        setWalletBalance(response.data?.wallet?.balance);
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
       }
@@ -397,7 +397,7 @@ const ServicesLayout = () => {
               </p>
             </div>
             <p className="text-2xl lg:text-3xl font-bold text-slate-900">
-              ₦ {walletBalance.toLocaleString()}
+              ₦ {walletBalance.toFixed(2)}
             </p>
           </div>
 

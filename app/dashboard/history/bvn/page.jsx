@@ -55,7 +55,9 @@ export default function BVNVerificationHistory() {
 
     setLoading(true);
     try {
-      const apiLink = apiUrl(API_CONFIG.BVN_VERIFICATION.DATA_HISTORY + userId);
+      const apiLink = apiUrl(
+        API_CONFIG.ENDPOINTS.BVN_VERIFICATION.DATA_HISTORY + userId
+      );
       const response = await axios.get(apiLink, {
         withCredentials: true,
         headers: {

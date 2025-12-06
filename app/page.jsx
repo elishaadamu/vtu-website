@@ -3,9 +3,9 @@ import React from "react";
 import Signin from "@/app/signin/page";
 
 export const metadata = {
-  title: "Kasuwar Zamani - Your One-Stop Online Shop",
+  title: "Abba Jagar",
   description:
-    "Discover a wide range of products on Kasuwar Zamani. From electronics to fashion, find everything you need with fast delivery.",
+    "Access all our premium services and manage your transactions seamlessly in one beautiful place",
 };
 
 const Home = () => {

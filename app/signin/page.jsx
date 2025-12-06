@@ -11,6 +11,7 @@ import { apiUrl, API_CONFIG } from "@/configs/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAppContext } from "@/context/AppContext";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const page = () => {
   const router = useRouter();
@@ -108,12 +109,17 @@ const page = () => {
             required
             autoComplete="current-password"
           />
-          <Image
+          <button
+            type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="w-5 cursor-pointer absolute right-3 top-9"
-            src={showPassword ? assets.eye_close_icon : assets.eye_open_icon}
-            alt="Toggle password visibility"
-          />
+            className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            {showPassword ? (
+              <FaEyeSlash className="w-5 h-5" />
+            ) : (
+              <FaEye className="w-5 h-5" />
+            )}
+          </button>
         </div>
         <button
           disabled={loading}

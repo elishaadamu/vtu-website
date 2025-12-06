@@ -35,7 +35,7 @@ export const API_CONFIG = {
     },
     SECURITY: {
       SET_PIN: "/wallet/set-pin",
-      UPDATE_PIN: "/wallet/changePin",
+      UPDATE_PIN: "/wallet/change-pin",
       CHANGE_PASSWORD: "/security/change-password",
       RESET_PASSWORD: "/security/reset-password",
     },

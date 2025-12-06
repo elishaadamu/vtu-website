@@ -542,8 +542,8 @@ const PinManagementPage = () => {
               />
             </div>
             
-            {/* Content Area */}
-            <div className="flex-1">
+            {/* Content Area - Desktop Only */}
+            <div className="hidden md:block flex-1">
               <div className="p-6 md:p-8">
                 {activeTab === "set-pin" && <SetPinForm />}
                 {activeTab === "update-pin" && <UpdatePinForm />}

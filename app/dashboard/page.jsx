@@ -338,6 +338,14 @@ const ServicesLayout = () => {
                               {card.accountName}
                             </p>
                           </div>
+                          <div className="mt-4 pt-4 border-t border-white/20">
+                            <p className="text-white/80 text-xs sm:text-sm mb-1">
+                              Wallet Balance:
+                            </p>
+                            <p className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
+                              ₦ {walletBalance.toFixed(2)}
+                            </p>
+                          </div>
                         </div>
 
                         {/* Decorative Chip */}
@@ -397,7 +405,7 @@ const ServicesLayout = () => {
               </p>
             </div>
             <p className="text-2xl lg:text-3xl font-bold text-slate-900">
-              ₦ {walletBalance.toFixed(2)}
+              ₦ 0.00
             </p>
           </div>
 

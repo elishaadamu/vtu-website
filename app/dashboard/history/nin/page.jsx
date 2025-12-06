@@ -96,7 +96,7 @@ export default function NINVerificationHistory() {
   const filteredTransactions = apiData.filter((transaction) => {
     // First filter for NIN-Slip only
     if (transaction.dataFor !== "NIN-Slip") return false;
-
+console.log("Transaction:", transaction); 
     const searchStr = searchTerm.toLowerCase();
     const transactionDate = new Date(transaction.createdAt);
 
@@ -184,7 +184,7 @@ export default function NINVerificationHistory() {
 
   const handleViewSlip = (transaction) => {
     const slipType = transaction.slipLayout;
-    const apiData = transaction.data.result || transaction.data?.data;
+    const apiData = transaction.data || transaction.data?.data;
 
     if (typeof viewNinSlip === "function") {
       viewNinSlip(apiData, slipType);
@@ -440,7 +440,7 @@ export default function NINVerificationHistory() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="font-mono bg-gray-100 px-3 py-1.5 rounded-lg text-sm">
-                              {transaction.data?.result?.user_data?.response[0]
+                              {transaction.data?.user_data?.response[0]
                                 ?.nin || "N/A"}
                             </div>
                           </div>
@@ -448,12 +448,12 @@ export default function NINVerificationHistory() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge
                             status={getStatusColor(
-                              transaction.data?.result?.user_data
+                              transaction.data?.user_data
                                 ?.verificationStatus || "N/A"
                             )}
                             text={
                               <span className="text-sm bg-green-200 text-green-900 p-2 rounded-full font-medium capitalize">
-                                {transaction.data?.result?.user_data
+                                {transaction.data?.user_data
                                   ?.verificationStatus || "N/A"}
                               </span>
                             }
@@ -642,28 +642,28 @@ export default function NINVerificationHistory() {
                   <div>
                     <p className="text-sm text-gray-600">NIN Number</p>
                     <p className="font-mono text-gray-900">
-                      {selectedTransaction.data?.result?.user_data?.response[0]
+                      {selectedTransaction.data?.user_data?.response[0]
                         ?.nin || "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Reference</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data?.result?.user_data
+                      {selectedTransaction.data?.user_data
                         ?.transactionReference || "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">First Name</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data?.result?.user_data?.response[0]
+                      {selectedTransaction.data?.user_data?.response[0]
                         ?.firstname || "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Last Name</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data?.result?.user_data?.response[0]
+                      {selectedTransaction.data?.user_data?.response[0]
                         ?.surname || "N/A"}
                     </p>
                   </div>

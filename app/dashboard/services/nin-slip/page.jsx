@@ -14,13 +14,15 @@ import { message, Modal } from "antd";
 import RegularSlip from "@/app/dashboard/assets/regular.png";
 import StandardSlip from "@/app/dashboard/assets/standard.png";
 import PremiumSlip from "@/app/dashboard/assets/premium.png";
+import { useRouter } from "next/navigation";
 
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { useAppContext } from "@/context/AppContext";
 
 const NinVerificationPage = () => {
-  const { userData } = useAppContext();
+  const router = useRouter();
+  const { userData, viewNinSlip } = useAppContext();
   const [verificationMethod, setVerificationMethod] = useState("nin"); // 'nin' or 'phone'
   const [selectedSlip, setSelectedSlip] = useState("standard"); // 'regular', 'standard', 'premium'
   const [idNumber, setIdNumber] = useState("");
@@ -229,6 +231,22 @@ const NinVerificationPage = () => {
             apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
           );
           setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
+
+          // Store verification data in context
+          const verificationData = response.data?.data?.result || response.data;
+          if (typeof viewNinSlip === "function") {
+            viewNinSlip(verificationData, selectedSlip);
+          }
+
+          // Navigate to appropriate slip view page
+          const lowerCaseSlipType = String(selectedSlip || "").toLowerCase();
+          if (lowerCaseSlipType === "regular") {
+            router.push("/regular-nin");
+          } else if (lowerCaseSlipType === "standard") {
+            router.push("/standard-nin");
+          } else if (lowerCaseSlipType === "premium") {
+            router.push("/premium-nin");
+          }
 
           // Reset form
           setIdNumber("");

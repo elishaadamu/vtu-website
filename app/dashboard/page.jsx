@@ -250,13 +250,13 @@ const ServicesLayout = () => {
         <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 lg:py-4">
         {/* Header Section */}
         <div className="mb-10 lg:mb-14">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className="text-2xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent mb-3">
-                Welcome to Your Dashboard
+                Welcome {userData?.firstName || userData?.username}
               </h1>
               <p className="text-base lg:text-lg text-slate-600 max-w-2xl">
                 Access all our premium services and manage your transactions
@@ -393,7 +393,7 @@ const ServicesLayout = () => {
           </div>
         </div>
 
-        {/* Stats Cards - Total Fund and Total Spent */}
+        {/* Stats Cards - Total Fund and Total Spent
         <div className="grid grid-cols-2 gap-4 mb-10 lg:mb-14">
           <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-5 lg:p-6 hover:shadow-2xl transition-all duration-300">
             <div className="flex items-center gap-3 mb-3">
@@ -420,7 +420,7 @@ const ServicesLayout = () => {
             </div>
             <p className="text-2xl lg:text-3xl font-bold text-slate-900">₦ 0</p>
           </div>
-        </div>
+        </div> */}
 
         {/* Main Grid Layout - Desktop: 3 columns, Tablet: 2 columns, Mobile: 1 column */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-5">
@@ -443,7 +443,7 @@ const ServicesLayout = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-5">
                 {services.map((service, index) => (
                   <Link
                     key={index}
@@ -456,17 +456,17 @@ const ServicesLayout = () => {
                     ></div>
 
                     <div className="relative z-10">
-                      <div className="flex items-start gap-4 mb-3">
+                      <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-3">
                         <div
-                          className={`bg-gradient-to-br ${service.gradient} p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 text-white`}
+                          className={`bg-gradient-to-br ${service.gradient} p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 text-white`}
                         >
                           {service.icon}
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-bold text-lg text-slate-900 group-hover:text-slate-800 mb-1">
+                          <h3 className="font-bold text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
                             {service.name}
                           </h3>
-                          <p className="text-sm text-slate-600 leading-relaxed">
+                          <p className="text-sm text-slate-600 text-center md:text-left leading-relaxed">
                             {service.description}
                           </p>
                         </div>

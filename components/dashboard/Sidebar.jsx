@@ -17,6 +17,7 @@ import {
   FaChevronDown,
   FaHistory,
   FaCogs,
+  FaSearch,
 } from "react-icons/fa";
 import { decryptData } from "@/lib/encryption";
 
@@ -136,6 +137,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
                       href: "/dashboard/services/ipe",
                       label: "IPE Verification",
                       icon: FaBolt,
+                    },
+                    {
+                      href: "/dashboard/services/free-ipe-check",
+                      label: "Free IPE Check",
+                      icon: FaSearch,
                     },
                     {
                       href: "/dashboard/services/data",

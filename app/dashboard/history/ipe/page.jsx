@@ -51,7 +51,7 @@ export default function IPEVerificationHistory() {
 
     setLoading(true);
     try {
-      const apiLink = apiUrl(API_CONFIG.IPE_VERIFICATION.DATA_HISTORY + userId);
+      const apiLink = apiUrl(API_CONFIG.ENDPOINTS.IPE_VERIFICATION.DATA_HISTORY + userId);
       const response = await axios.get(apiLink, {
         withCredentials: true,
         headers: {
@@ -63,7 +63,7 @@ export default function IPEVerificationHistory() {
       setApiData(details || []);
 
       // Calculate stats
-      const ipeTransactions = details.filter((t) => t.dataFor === "IPE");
+      const ipeTransactions = details.filter((t) => t.dataFor === "IPE-Slip");
 
       setStats({
         total: ipeTransactions.length,
@@ -78,7 +78,7 @@ export default function IPEVerificationHistory() {
   // Filter transactions based on search term and only show BVN-Slip data
   const filteredTransactions = apiData.filter((transaction) => {
     // First filter for IPE only
-    if (transaction.dataFor !== "IPE") return false;
+    if (transaction.dataFor !== "IPE-Slip") return false;
 
     const searchStr = searchTerm.toLowerCase();
     const transactionDate = new Date(transaction.createdAt);
@@ -164,19 +164,19 @@ export default function IPEVerificationHistory() {
   };
 
   const getStatusColor = (status) => {
-    if (!status) return "gray";
+    if (!status) return "default";
     const statusLower = status.toLowerCase();
-    if (statusLower.includes("success") || statusLower.includes("verified")) {
-      return "green";
-    } else if (statusLower.includes("pending")) {
-      return "orange";
+    if (statusLower.includes("successfully") || statusLower.includes("verified") || statusLower.includes("success")) {
+      return "success";
+    } else if (statusLower.includes("pending") || statusLower.includes("processing")) {
+      return "processing";
     } else if (
       statusLower.includes("failed") ||
       statusLower.includes("error")
     ) {
-      return "red";
+      return "error";
     }
-    return "blue";
+    return "default";
   };
 
   React.useEffect(() => {
@@ -298,9 +298,7 @@ export default function IPEVerificationHistory() {
                         sortKey="data.data.documentType"
                         className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                       />
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Document Number
-                      </th>
+                     
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Status
                       </th>
@@ -331,24 +329,18 @@ export default function IPEVerificationHistory() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Tag color="cyan" className="font-medium">
-                            {transaction.data?.data?.documentType || "N/A"}
+                            {transaction.dataFor || "N/A"}
                           </Tag>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="font-mono bg-gray-100 px-3 py-1.5 rounded-lg text-sm">
-                              {transaction.data?.data?.documentNumber || "N/A"}
-                            </div>
-                          </div>
-                        </td>
+                      
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge
                             status={getStatusColor(
-                              transaction.data?.verification?.status
+                              transaction.status
                             )}
                             text={
                               <span className="text-sm font-medium capitalize">
-                                {transaction.data?.verification?.status ||
+                                {transaction.status ||
                                   "Unknown"}
                               </span>
                             }
@@ -514,7 +506,7 @@ export default function IPEVerificationHistory() {
                     Document Type
                   </p>
                   <Tag color="cyan" className="font-medium">
-                    {selectedTransaction.data?.data?.documentType || "N/A"}
+                    {selectedTransaction.dataFor || "N/A"}
                   </Tag>
                 </div>
               </div>
@@ -525,29 +517,31 @@ export default function IPEVerificationHistory() {
                   Document Information
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
+                  
+                 
                   <div>
-                    <p className="text-sm text-gray-600">Document Number</p>
-                    <p className="font-mono text-gray-900">
-                      {selectedTransaction.data?.data?.documentNumber || "N/A"}
+                    <p className="text-sm text-gray-600">Full Name</p>
+                    <p className="text-gray-900">
+                      {selectedTransaction.data.data.result.name || "N/A"}
                     </p>
                   </div>
                   <div>
+                    <p className="text-sm text-gray-600">NIN</p>
+                    <p className="text-gray-900">
+                      {selectedTransaction.data.data.result.nin || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Date of Birth</p>
+                    <p className="text-gray-900">
+                      {selectedTransaction.data.data.result.dob || "N/A"}
+                    </p>
+                  </div>
+                   <div>
                     <p className="text-sm text-gray-600">Reference</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data?.verification?.reference ||
+                      {selectedTransaction.data.billing.transaction_reference ||
                         "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">First Name</p>
-                    <p className="text-gray-900">
-                      {selectedTransaction.data?.data?.firstName || "N/A"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">Last Name</p>
-                    <p className="text-gray-900">
-                      {selectedTransaction.data?.data?.lastName || "N/A"}
                     </p>
                   </div>
                 </div>
@@ -557,17 +551,12 @@ export default function IPEVerificationHistory() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500">Message</p>
-                  <Badge
-                    status={getStatusColor(
-                      selectedTransaction.data?.verification?.status
-                    )}
-                    text={
+                 
                       <span className="font-medium capitalize">
                         {selectedTransaction.data?.message || "Unknown"}
                       </span>
-                    }
-                    className="text-lg"
-                  />
+                    
+                  
                 </div>
 
                 <div>

@@ -33,6 +33,11 @@ export const API_CONFIG = {
       CREATE: "/verify/bvn",
       DATA_HISTORY: "/transactions/dataHistory/", // append userId
     },
+    IPE_VERIFICATION: {
+      CREATE: "/verify/submit/ipe",
+      CHECK: "/verify/freeStatus/ipe",
+      DATA_HISTORY: "/transactions/dataHistory/", // append userId
+    },
     SECURITY: {
       SET_PIN: "/wallet/set-pin",
       UPDATE_PIN: "/wallet/change-pin",

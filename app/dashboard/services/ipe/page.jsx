@@ -15,7 +15,7 @@ import { useAppContext } from "@/context/AppContext";
 
 const IpeVerificationPage = () => {
   const { userData } = useAppContext();
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [trackingId, setTrackingId] = useState("");
   const [amount, setAmount] = useState(0);
   const [pin, setPin] = useState(["", "", "", ""]);
   const [showPin, setShowPin] = useState(false);
@@ -23,6 +23,8 @@ const IpeVerificationPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAmount, setIsLoadingAmount] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
+  const [priceLoading, setPriceLoading] = useState(false);
+  const [ipePrice, setIpePrice] = useState(0);
 
   const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
@@ -45,6 +47,44 @@ const IpeVerificationPage = () => {
     fetchWalletBalance();
   }, [userData]);
 
+  // Fetch IPE price from API
+  useEffect(() => {
+    const fetchIpePrice = async () => {
+      setPriceLoading(true);
+      try {
+        const response = await axios.get(
+          apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
+        );
+        console.log("API Prices Response:", response.data);
+        
+        // Find IPE pricing
+        const ipePricingData = Array.isArray(response.data)
+          ? response.data.find((item) => item.key === "ipe")
+          : response.data;
+
+        const ipePricing =
+          ipePricingData?.key === "ipe" ? ipePricingData : null;
+
+        if (ipePricing && ipePricing.prices) {
+          // Set the agent price for IPE
+          setIpePrice(ipePricing.prices.agent);
+          console.log("IPE Agent Price:", ipePricing.prices.agent);
+        } else {
+          console.log("No IPE pricing found, using default");
+          setIpePrice(0);
+        }
+      } catch (error) {
+        console.error("Error fetching IPE price:", error);
+        message.error("Failed to fetch current IPE price");
+        setIpePrice(0);
+      } finally {
+        setPriceLoading(false);
+      }
+    };
+
+    fetchIpePrice();
+  }, []);
+
   const fetchAmount = async (phone) => {
     if (!phone) {
       setAmount(0);
@@ -53,25 +93,26 @@ const IpeVerificationPage = () => {
 
     setIsLoadingAmount(true);
     try {
-      const response = await axios.post(
-        apiUrl(API_CONFIG.IPE_VERIFICATION?.FETCH_AMOUNT || "/api/ipe/amount"),
-        { phone }
-      );
-      setAmount(response.data?.amount || 0);
+      // Use the fetched IPE price
+      if (ipePrice > 0) {
+        setAmount(ipePrice);
+      } else {
+        message.warning("Price not available yet. Please try again.");
+        setAmount(0);
+      }
     } catch (error) {
-      console.error("Error fetching amount:", error);
-      message.error(error.response?.data?.message || "Failed to fetch amount");
+      console.error("Error setting amount:", error);
       setAmount(0);
     } finally {
       setIsLoadingAmount(false);
     }
   };
 
-  const handlePhoneChange = (e) => {
+  const handleTrackingIdChange = (e) => {
     const value = e.target.value;
-    setPhoneNumber(value);
+    setTrackingId(value);
 
-    // Fetch amount when phone number is complete (11 digits for Nigerian numbers)
+    // Fetch amount when tracking ID is entered
     if (value.length >= 11) {
       fetchAmount(value);
     }
@@ -98,8 +139,8 @@ const IpeVerificationPage = () => {
 
   const handleVerify = (e) => {
     e.preventDefault();
-    if (!phoneNumber) {
-      message.error("Please enter your phone number");
+    if (!trackingId) {
+      message.error("Please enter your tracking ID");
       return;
     }
     if (pin.some((p) => p === "")) {
@@ -132,13 +173,13 @@ const IpeVerificationPage = () => {
             <div className="flex justify-between items-center border-b border-gray-200 pb-2">
               <span className="text-gray-500">Service</span>
               <span className="font-semibold text-gray-800 uppercase">
-                IPE Enrollment
+                IPE Clearance
               </span>
             </div>
             <div className="flex justify-between items-center border-b border-gray-200 pb-2">
-              <span className="text-gray-500">Phone Number</span>
+              <span className="text-gray-500">Tracking ID</span>
               <span className="font-semibold text-gray-800 font-mono text-lg">
-                {phoneNumber}
+                {trackingId}
               </span>
             </div>
             <div className="flex justify-between items-center pt-2">
@@ -171,7 +212,7 @@ const IpeVerificationPage = () => {
           }
 
           const payload = {
-            phone: phoneNumber,
+            trackingId: trackingId,
             amount,
             userId,
             pin: pin.join(""),
@@ -180,7 +221,7 @@ const IpeVerificationPage = () => {
           console.log("IPE Verification Payload:", payload);
 
           const response = await axios.post(
-            apiUrl(API_CONFIG.IPE_VERIFICATION?.CREATE || "/api/ipe/verify"),
+            apiUrl(API_CONFIG.ENDPOINTS.IPE_VERIFICATION?.CREATE),
             payload
           );
           console.log(response.data);
@@ -196,7 +237,7 @@ const IpeVerificationPage = () => {
           setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
 
           // Reset form
-          setPhoneNumber("");
+          setTrackingId("");
           setPin(["", "", "", ""]);
           setConsent(false);
           setAmount(0);
@@ -242,33 +283,33 @@ const IpeVerificationPage = () => {
         <div className="p-6 md:p-8 space-y-8">
           {/* Input Form */}
           <form onSubmit={handleVerify} className="space-y-6 max-w-2xl mx-auto">
-            {/* Phone Number Input */}
+            {/* Tracking ID Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
+                Tracking ID
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <FaPhone className="text-gray-400" />
                 </div>
                 <input
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={handlePhoneChange}
-                  placeholder="Enter phone number"
+                  type="text"
+                  value={trackingId}
+                  onChange={handleTrackingIdChange}
+                  placeholder="Enter tracking ID"
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
                 />
               </div>
             </div>
 
             {/* Amount Display */}
-            {phoneNumber && (
+            {trackingId && (
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-xl border border-green-200">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 font-medium">
                     Amount to Pay
                   </span>
-                  {isLoadingAmount ? (
+                  {priceLoading || isLoadingAmount ? (
                     <div className="flex items-center gap-2">
                       <svg
                         className="animate-spin h-5 w-5 text-green-600"
@@ -291,7 +332,7 @@ const IpeVerificationPage = () => {
                         ></path>
                       </svg>
                       <span className="text-sm text-green-600">
-                        Fetching...
+                        {priceLoading ? "Loading price..." : "Fetching..."}
                       </span>
                     </div>
                   ) : (

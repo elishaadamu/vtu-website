@@ -158,6 +158,7 @@ export default function IPEVerificationHistory() {
     );
   };
 
+
   const showModal = (transaction) => {
     setSelectedTransaction(transaction);
     setIsModalVisible(true);
@@ -191,6 +192,7 @@ export default function IPEVerificationHistory() {
   const totalPages = Math.ceil(sortedTransactions.length / pageSize);
 
   return (
+  
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/20 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
@@ -298,7 +300,9 @@ export default function IPEVerificationHistory() {
                         sortKey="data.data.documentType"
                         className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                       />
-                     
+                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Tracking ID
+                      </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Status
                       </th>
@@ -330,6 +334,11 @@ export default function IPEVerificationHistory() {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Tag color="cyan" className="font-medium">
                             {transaction.dataFor || "N/A"}
+                          </Tag>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <Tag  className="p-2 rounded bg-blue-50 font-medium">
+                            {transaction.data?.data?.result?.reply || transaction.trackingId || "N/A"}
                           </Tag>
                         </td>
                       
@@ -522,25 +531,25 @@ export default function IPEVerificationHistory() {
                   <div>
                     <p className="text-sm text-gray-600">Full Name</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data.data.result.name || "N/A"}
+                      {selectedTransaction.data?.data?.result?.name || "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">NIN</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data.data.result.nin || "N/A"}
+                      {selectedTransaction.data?.data?.result?.nin || "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Date of Birth</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data.data.result.dob || "N/A"}
+                      {selectedTransaction.data?.data?.result?.dob || "N/A"}
                     </p>
                   </div>
                    <div>
                     <p className="text-sm text-gray-600">Reference</p>
                     <p className="text-gray-900">
-                      {selectedTransaction.data.billing.transaction_reference ||
+                      {selectedTransaction.data?.billing?.transaction_reference ||
                         "N/A"}
                     </p>
                   </div>

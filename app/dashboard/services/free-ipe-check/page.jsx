@@ -98,13 +98,13 @@ const FreeIpeCheckPage = () => {
               <div className="flex justify-between items-center border-b border-gray-200 pb-2">
                 <span className="text-gray-500">Tracking ID</span>
                 <span className="font-semibold text-gray-800 font-mono">
-                  {trackingId}
+                {response.data.data.data.result?.reply || ""}
                 </span>
               </div>
               <div className="flex justify-between items-center border-b border-gray-200 pb-2">
                 <span className="text-gray-500">Status</span>
                 <span className="font-semibold text-green-600">
-                  {response.data?.status || "Available"}
+                  {response.data.data.data.result?.status || ""}
                 </span>
               </div>
               {response.data?.message && (

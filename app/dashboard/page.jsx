@@ -259,8 +259,7 @@ const ServicesLayout = () => {
                 Welcome {userData?.firstName || userData?.username}
               </h1>
               <p className="text-base lg:text-lg text-slate-600 max-w-2xl">
-                Access all our premium services and manage your transactions
-                seamlessly in one beautiful place
+                All your premium services and transactions in one place
               </p>
             </div>
             <div className="flex items-center gap-3">

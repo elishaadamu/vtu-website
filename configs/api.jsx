@@ -46,6 +46,10 @@ export const API_CONFIG = {
     },
     FETCH_PRICES: {
       PRICES: "/transactions/prices",
+    },
+    DATA: {
+      GET_ALL: "/data-plan",
+      GET_BY_NETWORK: "/data-plan/network" // append /{network}
     }
   },
 

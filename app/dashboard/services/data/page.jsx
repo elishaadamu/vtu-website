@@ -103,26 +103,33 @@ const DataPage = () => {
     fetchWalletBalance();
   }, [userData]);
 
-  // Fetch data plans from API
+  // Fetch all data plans from API on initial load
   useEffect(() => {
     const fetchDataPlans = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
+          apiUrl(API_CONFIG.ENDPOINTS.DATA.GET_ALL)
         );
-        console.log("API Prices Response:", response.data);
+        console.log("Data Plans Response:", response.data);
         
-        // Find data pricing
-        const dataPricingData = Array.isArray(response.data)
-          ? response.data.find((item) => item.key === "data")
-          : response.data;
-
-        if (dataPricingData && dataPricingData.plans) {
-          // Use plans from API
-          setPlans(dataPricingData.plans);
+        // API returns { count: number, data: [...] }
+        if (response.data.data && Array.isArray(response.data.data)) {
+          // Map API fields to component's expected structure
+          const mappedPlans = response.data.data
+            .filter(plan => plan.isActive) // Only show active plans
+            .map(plan => ({
+              planId: plan.planId,
+              networkId: plan.network.toLowerCase(), // Convert to lowercase for matching
+              name: plan.planName,
+              validity: `${plan.validity} Days`,
+              price: plan.price,
+              _id: plan._id
+            }));
+          setPlans(mappedPlans);
         } else {
-          // Fallback to default plans if API doesn't return data plans
+          // Fallback to default plans if API doesn't return expected format
+          console.warn("Unexpected API response format, using fallback plans");
           setPlans(allPlans);
         }
       } catch (error) {
@@ -136,6 +143,51 @@ const DataPage = () => {
 
     fetchDataPlans();
   }, []);
+
+  // Fetch network-specific plans when network is selected
+  useEffect(() => {
+    if (!selectedNetwork) return;
+
+    const fetchNetworkPlans = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          apiUrl(`${API_CONFIG.ENDPOINTS.DATA.GET_BY_NETWORK}/${selectedNetwork.toUpperCase()}`)
+        );
+        console.log(`${selectedNetwork} Plans Response:`, response.data);
+        
+        // API returns { count: number, data: [...] }
+        if (response.data.data && Array.isArray(response.data.data)) {
+          // Map API fields to component's expected structure
+          const mappedPlans = response.data.data
+            .filter(plan => plan.isActive) // Only show active plans
+            .map(plan => ({
+              planId: plan.planId,
+              networkId: plan.network.toLowerCase(), // Convert to lowercase for matching
+              name: plan.planName,
+              validity: `${plan.validity} Days`,
+              price: plan.price,
+              _id: plan._id
+            }));
+          setPlans(mappedPlans);
+        } else {
+          // Fallback to filtering all plans if API doesn't return expected format
+          console.warn("Unexpected API response format, filtering from all plans");
+          const filtered = allPlans.filter(plan => plan.networkId === selectedNetwork);
+          setPlans(filtered.length > 0 ? filtered : allPlans);
+        }
+      } catch (error) {
+        console.error(`Error fetching ${selectedNetwork} plans:`, error);
+        // Fallback to filtering from all plans on error
+        const filtered = allPlans.filter(plan => plan.networkId === selectedNetwork);
+        setPlans(filtered.length > 0 ? filtered : allPlans);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNetworkPlans();
+  }, [selectedNetwork]);
 
   const handleNetworkSelect = (networkId) => {
     setSelectedNetwork(networkId);

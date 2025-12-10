@@ -22,6 +22,7 @@ const IpeVerificationPage = () => {
   const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAmount, setIsLoadingAmount] = useState(false);
+  const [walletLoading, setWalletLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [priceLoading, setPriceLoading] = useState(false);
   const [ipePrice, setIpePrice] = useState(0);
@@ -35,12 +36,15 @@ const IpeVerificationPage = () => {
       if (!userId) return;
 
       try {
+        setWalletLoading(true);
         const response = await axios.get(
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
+      } finally {
+        setWalletLoading(false);
       }
     };
 
@@ -271,9 +275,13 @@ const IpeVerificationPage = () => {
           </div>
           <div>
             <p className="text-xs text-gray-400 font-medium">Wallet Balance</p>
-            <p className="text-lg font-bold">
-              ₦ {walletBalance.toLocaleString()}
-            </p>
+            {walletLoading ? (
+              <div className="h-6 w-24 bg-white/20 rounded animate-pulse mt-1"></div>
+            ) : (
+              <p className="text-lg font-bold">
+                ₦ {walletBalance.toLocaleString()}
+              </p>
+            )}
           </div>
         </div>
       </div>

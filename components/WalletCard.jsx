@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 
-const WalletCard = ({ walletBalance }) => {
+const WalletCard = ({ walletBalance, isLoading = false }) => {
   // Wallet Cards Data
   const walletCards = [
     {
@@ -155,9 +155,18 @@ const WalletCard = ({ walletBalance }) => {
                         <p className="text-white/80 text-xs sm:text-sm mb-1">
                           Wallet Balance:
                         </p>
-                        <p className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
-                          ₦ {Number(walletBalance).toFixed(2)}
-                        </p>
+                  {isLoading ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                              <span className="text-white/80 text-sm">
+                                Loading...
+                              </span>
+                            </div>
+                          ) : (
+                            <p className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
+                              ₦ {Number(walletBalance).toFixed(2)}
+                            </p>
+                          )}
                       </div>
                     </div>
 

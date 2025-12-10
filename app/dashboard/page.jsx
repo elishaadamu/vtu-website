@@ -25,8 +25,9 @@ import { useAppContext } from "@/context/AppContext";
 import WalletCard from "@/components/WalletCard";
 
 const ServicesLayout = () => {
-  const { userData } = useAppContext();
+  const { userData, authLoading } = useAppContext();
   const [walletBalance, setWalletBalance] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const services = [
     {
@@ -132,6 +133,7 @@ const ServicesLayout = () => {
       if (!userId) return;
 
       try {
+        setLoading(true);
         const response = await axios.get(
           apiUrl(
             API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
@@ -141,12 +143,13 @@ const ServicesLayout = () => {
         setWalletBalance(response.data?.wallet?.balance);
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchWalletBalance();
   }, [userData]);
-
 
 
 
@@ -165,10 +168,21 @@ const ServicesLayout = () => {
         <div className="mb-10 lg:mb-8">
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold mb-3">
-              <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                Welcome {userData?.firstName || userData?.username}
-              </span>{" "}
-              <span>🙂</span>
+              {authLoading ? (
+                <div className="flex items-center gap-2">
+                  <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+                    Welcome
+                  </span>
+                  <div className="h-8 w-40 bg-gray-200 rounded-lg animate-pulse" />
+                </div>
+              ) : (
+                <>
+                  <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+                    Welcome {userData?.firstName || userData?.username}
+                  </span>{" "}
+                  <span>🙂</span>
+                </>
+              )}
             </h1>
             <p className="text-base lg:text-lg text-slate-600 max-w-2xl">
               All your premium services and transactions in one place
@@ -177,7 +191,7 @@ const ServicesLayout = () => {
         </div>
 
         {/* Wallet Carousel Section */}
-        <WalletCard walletBalance={walletBalance} />
+        <WalletCard walletBalance={walletBalance} isLoading={loading || authLoading} />
 
         {/* Stats Cards - Total Fund and Total Spent
         <div className="grid grid-cols-2 gap-4 mb-10 lg:mb-14">

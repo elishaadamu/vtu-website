@@ -17,6 +17,7 @@ const AirtimePage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [walletLoading, setWalletLoading] = useState(false);
 
   // Fetch wallet balance
   useEffect(() => {
@@ -26,6 +27,7 @@ const AirtimePage = () => {
       if (!userId) return;
 
       try {
+        setWalletLoading(true);
         const response = await axios.get(
           apiUrl(
             API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
@@ -34,6 +36,8 @@ const AirtimePage = () => {
         setWalletBalance(response.data?.wallet?.balance || 0);
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
+      } finally {
+        setWalletLoading(false);
       }
     };
 
@@ -79,9 +83,13 @@ const AirtimePage = () => {
           </div>
           <div>
             <p className="text-slate-600 font-medium">Available Balance</p>
-            <p className="text-2xl font-bold text-slate-900">
-              ₦ {walletBalance.toLocaleString()}
-            </p>
+            {walletLoading ? (
+              <div className="h-8 w-32 bg-slate-200 rounded animate-pulse mt-1"></div>
+            ) : (
+              <p className="text-2xl font-bold text-slate-900">
+                ₦ {walletBalance.toLocaleString()}
+              </p>
+            )}
           </div>
         </div>
       </div>

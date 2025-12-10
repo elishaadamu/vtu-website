@@ -29,6 +29,7 @@ const BvnVerificationPage = () => {
   const [showPin, setShowPin] = useState(false);
   const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [walletLoading, setWalletLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [priceLoading, setPriceLoading] = useState(false);
   const [agentPrices, setAgentPrices] = useState([]);
@@ -42,12 +43,15 @@ const BvnVerificationPage = () => {
       if (!userId) return;
 
       try {
+        setWalletLoading(true);
         const response = await axios.get(
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
+      } finally {
+        setWalletLoading(false);
       }
     };
 
@@ -297,9 +301,13 @@ const BvnVerificationPage = () => {
           </div>
           <div>
             <p className="text-xs text-gray-400 font-medium">Wallet Balance</p>
-            <p className="text-lg font-bold">
-              ₦ {walletBalance.toFixed(2)}
-            </p>
+            {walletLoading ? (
+              <div className="h-6 w-24 bg-white/20 rounded animate-pulse mt-1"></div>
+            ) : (
+              <p className="text-lg font-bold">
+                ₦ {walletBalance.toFixed(2)}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -375,9 +383,16 @@ const BvnVerificationPage = () => {
                       />
                     )}
                   </div>
-                  <p className="text-2xl font-bold text-gray-800 mb-3">
-                    {slip.price}
-                  </p>
+                  {priceLoading ? (
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-sm text-gray-500">Loading...</span>
+                    </div>
+                  ) : (
+                    <p className="text-2xl font-bold text-gray-800 mb-3">
+                      {slip.price}
+                    </p>
+                  )}
                   <ul className="space-y-2">
                     {slip.features.map((feature, idx) => (
                       <li

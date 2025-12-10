@@ -10,6 +10,7 @@ import { apiUrl, API_CONFIG } from "@/configs/api";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/dashboard/Sidebar";
+import DateTime from "@/components/DateTime";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -64,11 +65,12 @@ const DashboardLayout = ({ children }) => {
       />
 
       <div className="md:pl-64 flex flex-col min-h-screen">
-        <div className=" bg-white md:hidden">
-          <div className="flex items-center justify-between p-4 border-b">
+        {/* Mobile Header */}
+        <div className="bg-white md:hidden">
+          <div className="grid grid-cols-3 items-center p-4 border-b">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 rounded-md hover:bg-gray-100"
+              className="p-2 rounded-md hover:bg-gray-100 justify-self-start"
             >
               <svg
                 className="w-6 h-6"
@@ -84,9 +86,19 @@ const DashboardLayout = ({ children }) => {
                 />
               </svg>
             </button>
-            <Link href={"/"}>
-              <Image className="w-[7rem] mx-auto" src={Logo} alt="logo" />
+            <Link href={"/"} className="justify-self-center">
+              <Image className="w-[3rem]"  src={Logo} alt="logo" />
             </Link>
+            <div className="scale-75 origin-right justify-self-end">
+              <DateTime />
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden md:block bg-white border-b">
+          <div className="flex items-center justify-end p-2">
+            <DateTime />
           </div>
         </div>
 

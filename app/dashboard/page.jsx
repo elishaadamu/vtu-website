@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   FaDatabase,
@@ -22,11 +22,11 @@ import {
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { useAppContext } from "@/context/AppContext";
+import WalletCard from "@/components/WalletCard";
 
 const ServicesLayout = () => {
   const { userData } = useAppContext();
   const [walletBalance, setWalletBalance] = useState(0);
-  const [currentTime, setCurrentTime] = useState(new Date());
 
   const services = [
     {
@@ -124,43 +124,6 @@ const ServicesLayout = () => {
     },
   ];
 
-  // Wallet Cards Data
-  const walletCards = [
-    {
-      bankName: "Wema Bank",
-      accountNumber: "8573368088",
-      accountName: "NORTHENCONNECT - Alkasim Khalil Ashana",
-      balance: "₦205,707",
-      charge: "CHARGE 1.08%",
-      gradient: "from-blue-600 via-blue-500 to-blue-700",
-      accentColor: "bg-orange-400",
-    },
-    {
-      bankName: "Sterling Bank",
-      accountNumber: "8234567890",
-      accountName: "NORTHENCONNECT - Alkasim Khalil",
-      balance: "₦150,320",
-      charge: "CHARGE 0.95%",
-      gradient: "from-purple-600 via-purple-500 to-indigo-600",
-      accentColor: "bg-pink-400",
-    },
-    {
-      bankName: "GTBank",
-      accountNumber: "0123456789",
-      accountName: "NORTHENCONNECT - Business Account",
-      balance: "₦420,500",
-      charge: "CHARGE 1.20%",
-      gradient: "from-orange-600 via-orange-500 to-red-600",
-      accentColor: "bg-yellow-400",
-    },
-  ];
-
-  // Carousel State
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-
   // Fetch wallet balance
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -184,62 +147,9 @@ const ServicesLayout = () => {
     fetchWalletBalance();
   }, [userData]);
 
-  // Clock effect
-  useEffect(() => {
-    const timerId = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
 
-    // Cleanup the interval on component unmount
-    return () => clearInterval(timerId);
-  }, []);
 
-  // Auto-play carousel
-  useEffect(() => {
-    if (!isAutoPlaying) return;
 
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % walletCards.length);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [isAutoPlaying, walletCards.length]);
-
-  // Navigation functions
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % walletCards.length);
-    setIsAutoPlaying(false);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide(
-      (prev) => (prev - 1 + walletCards.length) % walletCards.length
-    );
-    setIsAutoPlaying(false);
-  };
-
-  const goToSlide = (index) => {
-    setCurrentSlide(index);
-    setIsAutoPlaying(false);
-  };
-
-  // Touch handlers for swipe
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchMove = (e) => {
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartX.current - touchEndX.current > 50) {
-      nextSlide();
-    }
-    if (touchStartX.current - touchEndX.current < -50) {
-      prevSlide();
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -250,147 +160,24 @@ const ServicesLayout = () => {
         <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 lg:py-4">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
         {/* Header Section */}
-        <div className="mb-10 lg:mb-14">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div>
-              <h1 className="text-2xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent mb-3">
+        <div className="mb-10 lg:mb-8">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold mb-3">
+              <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
                 Welcome {userData?.firstName || userData?.username}
-              </h1>
-              <p className="text-base lg:text-lg text-slate-600 max-w-2xl">
-                All your premium services and transactions in one place
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="bg-white/80 backdrop-blur-sm px-4 py-3 rounded-full shadow-sm border border-slate-200 text-center">
-                <p className="text-lg font-semibold text-slate-900 font-mono tracking-wider">
-                  {currentTime.toLocaleTimeString()}
-                </p>
-              </div>
-            </div>
+              </span>{" "}
+              <span>🙂</span>
+            </h1>
+            <p className="text-base lg:text-lg text-slate-600 max-w-2xl">
+              All your premium services and transactions in one place
+            </p>
           </div>
         </div>
 
         {/* Wallet Carousel Section */}
-        <div className="mb-10 lg:mb-14">
-          <div className="relative">
-            {/* Carousel Container */}
-            <div
-              className="relative overflow-hidden rounded-3xl"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
-              {/* Cards Wrapper */}
-              <div
-                className="flex transition-transform duration-500 ease-out"
-                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-              >
-                {walletCards.map((card, index) => (
-                  <div key={index} className="min-w-full px-2 sm:px-0">
-                    {/* Bank Card */}
-                    <div
-                      className={`relative bg-gradient-to-br ${card.gradient} rounded-2xl p-4 sm:p-5 lg:p-6 shadow-2xl overflow-hidden`}
-                    >
-                      {/* Decorative Elements */}
-                      <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -mr-20 -mt-20"></div>
-                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-black/10 rounded-full -ml-16 -mb-16"></div>
-
-                      {/* Card Content */}
-                      <div className="relative z-10">
-                        {/* Top Section - Bank Name and Charge */}
-                        <div className="flex items-start justify-between mb-4 sm:mb-5">
-                          <div>
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center shadow-lg">
-                                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-red-500 to-pink-500 rounded"></div>
-                              </div>
-                              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg shadow-lg"></div>
-                            </div>
-                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mt-2">
-                              {card.bankName}
-                            </h2>
-                          </div>
-                          <div className="bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                            <p className="text-xs sm:text-sm font-semibold text-white">
-                              {card.charge}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Account Details */}
-                        <div className="space-y-2 sm:space-y-2.5">
-                          <div>
-                            <p className="text-white/80 text-xs sm:text-sm mb-1">
-                              Acc. No:
-                            </p>
-                            <p className="text-white text-base sm:text-lg lg:text-xl font-bold tracking-wider">
-                              {card.accountNumber}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-white/80 text-xs sm:text-sm mb-1">
-                              Acc. Name:
-                            </p>
-                            <p className="text-white text-xs sm:text-sm lg:text-base font-semibold">
-                              {card.accountName}
-                            </p>
-                          </div>
-                          <div className="mt-4 pt-4 border-t border-white/20">
-                            <p className="text-white/80 text-xs sm:text-sm mb-1">
-                              Wallet Balance:
-                            </p>
-                            <p className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
-                              ₦ {walletBalance.toFixed(2)}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Decorative Chip */}
-                        <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-yellow-200/30 to-orange-300/30 rounded-lg backdrop-blur-sm border border-white/20"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Navigation Arrows - Hidden on mobile, visible on tablet and desktop
-            <button
-              onClick={prevSlide}
-              className="hidden sm:flex absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 lg:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 z-20"
-              aria-label="Previous slide"
-            >
-              <FaChevronLeft className="w-5 h-5 lg:w-6 lg:h-6 text-slate-700" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="hidden sm:flex absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 lg:p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 z-20"
-              aria-label="Next slide"
-            >
-              <FaChevronRight className="w-5 h-5 lg:w-6 lg:h-6 text-slate-700" />
-            </button> */}
-
-            {/* Dot Indicators */}
-            <div className="flex justify-center gap-2 mt-6">
-              {walletCards.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`transition-all duration-300 rounded-full ${
-                    currentSlide === index
-                      ? "w-8 sm:w-10 h-2.5 sm:h-3 bg-gradient-to-r from-blue-600 to-indigo-600"
-                      : "w-2.5 sm:w-3 h-2.5 sm:h-3 bg-slate-300 hover:bg-slate-400"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+        <WalletCard walletBalance={walletBalance} />
 
         {/* Stats Cards - Total Fund and Total Spent
         <div className="grid grid-cols-2 gap-4 mb-10 lg:mb-14">
@@ -447,15 +234,15 @@ const ServicesLayout = () => {
                   <Link
                     key={index}
                     href={service.path}
-                    className="group relative bg-white rounded-xl p-5 lg:p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl border border-slate-100 overflow-hidden"
+                    className="group relative bg-white rounded-xl p-5 lg:p-6 transition-all duration-300 hover:scale-105 hover:shadow-md border border-slate-100 overflow-hidden"
                   >
                     {/* Gradient Background on Hover */}
                     <div
-                      className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                      className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
                     ></div>
 
                     <div className="relative z-10">
-                      <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-3">
+                      <div className="flex flex-row md:flex-row justify-center items-center gap-4 mb-3">
                         <div
                           className={`bg-gradient-to-br ${service.gradient} p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 text-white`}
                         >
@@ -465,12 +252,10 @@ const ServicesLayout = () => {
                           <h3 className="font-bold text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
                             {service.name}
                           </h3>
-                          <p className="text-sm text-slate-600 text-center md:text-left leading-relaxed">
-                            {service.description}
-                          </p>
+                         
                         </div>
                       </div>
-                      <div className="flex items-center justify-end mt-4">
+                      <div className="flex items-center justify-start mt-4">
                         <span
                           className={`text-sm font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent flex items-center gap-1 group-hover:gap-2 transition-all`}
                         >

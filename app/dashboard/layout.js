@@ -1,6 +1,3 @@
-import React from "react";
-import Signin from "@/app/signin/page";
-
 export const metadata = {
   title: "Dashboard - VTU Services | Data, Airtime, Bills Payment",
   description:
@@ -21,8 +18,8 @@ export const metadata = {
   },
 };
 
-const Home = () => {
-  return <Signin />;
-};
+import DashboardLayout from "./layout-client";
 
-export default Home;
+export default function Layout({ children }) {
+  return <DashboardLayout>{children}</DashboardLayout>;
+}

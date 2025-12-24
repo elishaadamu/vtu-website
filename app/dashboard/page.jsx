@@ -167,42 +167,48 @@ const ServicesLayout = () => {
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.ALL_HISTORY + userId)
         );
         setgetCount(response.data?.count);
-        const allTransactions = response.data?.transactions || response.data?.data || [];
+        const allTransactions =
+          response.data?.transactions || response.data?.data || [];
         console.log("All Transactions:", response.data);
         // Process transactions to extract network and phone from description
-        const processedTransactions = allTransactions.map(transaction => {
+        const processedTransactions = allTransactions.map((transaction) => {
           let network = transaction.network;
           let phone = transaction.phone || transaction.phoneNumber;
-          
+
           // Extract network from description
           if (!network && transaction.description) {
-            const networkMatch = transaction.description.match(/:\s*([^-]+)\s*-/);
+            const networkMatch =
+              transaction.description.match(/:\s*([^-]+)\s*-/);
             if (networkMatch) {
               network = networkMatch[1].trim();
             }
           }
-          
+
           // Extract phone from description
           if (!phone && transaction.description) {
-            const phoneMatch = transaction.description.match(/(?:for|-)\s*(\d{11})/);
+            const phoneMatch =
+              transaction.description.match(/(?:for|-)\s*(\d{11})/);
             if (phoneMatch) {
               phone = phoneMatch[1];
             }
           }
-          
+
           return {
             ...transaction,
             network: network || "N/A",
             phoneNumber: phone || "N/A",
-            reference: transaction.transactionReference || transaction.reference || transaction.transactionId
+            reference:
+              transaction.transactionReference ||
+              transaction.reference ||
+              transaction.transactionId,
           };
         });
-        
+
         // Get the 5 most recent transactions
         const recent = processedTransactions
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 5);
-        
+
         setRecentTransactions(recent);
       } catch (error) {
         console.error("Error fetching recent transactions:", error);
@@ -214,49 +220,50 @@ const ServicesLayout = () => {
     fetchRecentTransactions();
   }, [userData]);
 
-
-
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200  rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
-        {/* Header Section */}
-        <div className="mb-10 lg:mb-8">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold mb-3">
-              {authLoading ? (
-                <div className="flex items-center gap-2">
-                  <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                    Welcome
-                  </span>
-                  <div className="h-8 w-40 bg-gray-200 rounded-lg animate-pulse" />
-                </div>
-              ) : (
-                <>
-                  <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                    Welcome {userData?.firstName || userData?.username}
-                  </span>{" "}
-                  <span>🙂</span>
-                </>
-              )}
-            </h1>
-            <p className="text-base lg:text-lg text-slate-600 max-w-2xl">
-              All your premium services and transactions in one place
-            </p>
-          </div>
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        {/* Animated Background Elements */}
+        <div className="fixed inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200  rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+          <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
-        {/* Wallet Carousel Section */}
-        <WalletCard walletBalance={walletBalance} isLoading={loading || authLoading} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+          {/* Header Section */}
+          <div className="mb-10 lg:mb-8">
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold mb-3">
+                {authLoading ? (
+                  <div className="flex items-center gap-2">
+                    <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+                      Welcome
+                    </span>
+                    <div className="h-8 w-40 bg-gray-200 rounded-lg animate-pulse" />
+                  </div>
+                ) : (
+                  <>
+                    <span className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+                      Welcome {userData?.firstName || userData?.username}
+                    </span>{" "}
+                    <span>🙂</span>
+                  </>
+                )}
+              </h1>
+              <p className="text-base lg:text-lg text-slate-600 max-w-2xl">
+                All your premium services and transactions in one place
+              </p>
+            </div>
+          </div>
 
-        {/* Stats Cards - Total Fund and Total Spent
+          {/* Wallet Carousel Section */}
+          <WalletCard
+            walletBalance={walletBalance}
+            isLoading={loading || authLoading}
+          />
+
+          {/* Stats Cards - Total Fund and Total Spent
         <div className="grid grid-cols-2 gap-4 mb-10 lg:mb-14">
           <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-5 lg:p-6 hover:shadow-2xl transition-all duration-300">
             <div className="flex items-center gap-3 mb-3">
@@ -285,222 +292,239 @@ const ServicesLayout = () => {
           </div>
         </div> */}
 
-        {/* Main Grid Layout - Desktop: 3 columns, Tablet: 2 columns, Mobile: 1 column */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-5">
-          {/* Services Section - Takes 2 columns on desktop */}
-          <div className="lg:col-span-2">
-            <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-6 lg:p-8 hover:shadow-2xl transition-all duration-300">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl shadow-lg">
-                    <FaDatabase className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl lg:text-2xl font-bold text-slate-900">
-                      Our Services
-                    </h2>
-                    <p className="text-sm text-slate-600 mt-1">
-                      {services.length} premium services available
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-5">
-                {services.map((service, index) => (
-                  <Link
-                    key={index}
-                    href={service.path}
-                    className="group relative bg-white rounded-xl p-5 lg:p-6 transition-all duration-300 hover:scale-105 hover:shadow-md border border-slate-100 overflow-hidden"
-                  >
-                    {/* Gradient Background on Hover */}
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
-                    ></div>
-
-                    <div className="relative z-10">
-                      <div className="flex flex-row md:flex-row justify-center items-center gap-4 mb-3">
-                        <div
-                          className={`bg-gradient-to-br ${service.gradient} p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 text-white`}
-                        >
-                          {service.icon}
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-bold text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
-                            {service.name}
-                          </h3>
-                         
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-start mt-4">
-                        <span
-                          className={`text-sm font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent flex items-center gap-1 group-hover:gap-2 transition-all`}
-                        >
-                          Access now
-                          <FaArrowRight className="w-3 h-3" />
-                        </span>
-                      </div>
+          {/* Main Grid Layout - Desktop: 3 columns, Tablet: 2 columns, Mobile: 1 column */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-5">
+            {/* Services Section - Takes 2 columns on desktop */}
+            <div className="lg:col-span-2">
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-6 lg:p-8 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-3 rounded-xl shadow-lg">
+                      <FaDatabase className="w-6 h-6 text-white" />
                     </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Transactions & Stats Section - Takes 1 column on desktop */}
-          <div className="space-y-6 lg:space-y-8">
-            {/* Transactions List */}
-            <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-6 hover:shadow-2xl transition-all duration-300">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-3 rounded-xl shadow-lg">
-                  <FaWallet className="w-5 h-5 text-white" />
+                    <div>
+                      <h2 className="text-2xl lg:text-2xl font-bold text-slate-900">
+                        Our Services
+                      </h2>
+                      <p className="text-sm text-slate-600 mt-1">
+                        {services.length} premium services available
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-xl lg:text-2xl font-bold text-slate-900">
-                    Quick Actions
-                  </h2>
-                  <p className="text-sm text-slate-600">Manage activities</p>
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                {transactions.map((item, index) => (
-                  <Link
-                    key={index}
-                    href={item.path}
-                    className="group flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
-                  >
-                    <div className="flex items-center gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-5">
+                  {services.map((service, index) => (
+                    <Link
+                      key={index}
+                      href={service.path}
+                      className="group relative bg-white rounded-xl p-5 lg:p-6 transition-all duration-300 hover:scale-105 hover:shadow-md border border-slate-100 overflow-hidden"
+                    >
+                      {/* Gradient Background on Hover */}
                       <div
-                        className={`bg-${item.color}-100 p-2.5 rounded-lg group-hover:bg-${item.color}-200 transition-colors text-${item.color}-600`}
-                      >
-                        {item.icon}
+                        className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
+                      ></div>
+
+                      <div className="relative z-10">
+                        <div className="flex flex-row md:flex-row justify-center items-center gap-4 mb-3">
+                          <div
+                            className={`bg-gradient-to-br ${service.gradient} p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 text-white`}
+                          >
+                            {service.icon}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
+                              {service.name}
+                            </h3>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-start mt-4">
+                          <span
+                            className={`text-sm font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent flex items-center gap-1 group-hover:gap-2 transition-all`}
+                          >
+                            Access now
+                            <FaArrowRight className="w-3 h-3" />
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-medium text-slate-900 group-hover:text-slate-700">
-                        {item.name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {item.count !== null && (
-                        <span
-                          className={`bg-${item.color}-100 text-${item.color}-700 text-xs font-bold px-2.5 py-1 rounded-full`}
-                        >
-                          {item.count}
-                        </span>
-                      )}
-                      <FaArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition-all" />
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* Recent Transactions */}
-            <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-6 hover:shadow-2xl transition-all duration-300">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-3 rounded-xl shadow-lg">
-                    <FaClipboardList className="w-5 h-5 text-white" />
+            {/* Transactions & Stats Section - Takes 1 column on desktop */}
+            <div className="space-y-6 lg:space-y-8">
+              {/* Transactions List */}
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-6 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-3 rounded-xl shadow-lg">
+                    <FaWallet className="w-5 h-5 text-white" />
                   </div>
                   <div>
                     <h2 className="text-xl lg:text-2xl font-bold text-slate-900">
-                      Recent Transactions
+                      Quick Actions
                     </h2>
-                    <p className="text-sm text-slate-600">Last 5 activities</p>
+                    <p className="text-sm text-slate-600">Manage activities</p>
                   </div>
                 </div>
-              
+
+                <div className="space-y-2">
+                  {transactions.map((item, index) => (
+                    <Link
+                      key={index}
+                      href={item.path}
+                      className="group flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`bg-${item.color}-100 p-2.5 rounded-lg group-hover:bg-${item.color}-200 transition-colors text-${item.color}-600`}
+                        >
+                          {item.icon}
+                        </div>
+                        <span className="font-medium text-slate-900 group-hover:text-slate-700">
+                          {item.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {item.count !== null && (
+                          <span
+                            className={`bg-${item.color}-100 text-${item.color}-700 text-xs font-bold px-2.5 py-1 rounded-full`}
+                          >
+                            {item.count}
+                          </span>
+                        )}
+                        <FaArrowRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-1 transition-all" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
 
-              {transactionsLoading ? (
-                <div className="space-y-3">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-16 bg-slate-200 rounded-lg animate-pulse"></div>
-                  ))}
-                </div>
-              ) : recentTransactions.length > 0 ? (
-                <div className="space-y-2">
-                  {recentTransactions.map((transaction, index) => (
-                    <div
-                      key={transaction._id || index}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200"
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="bg-purple-100 p-2 rounded-lg">
-                          {transaction.TransactionType === "Data-Purchase" ? (
-                            <FaDatabase className="w-4 h-4 text-purple-600" />
-                          ) : (
-                            <FaMobileAlt className="w-4 h-4 text-purple-600" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-slate-900 text-sm truncate">
-                            {transaction.TransactionType}{transaction.network !== "N/A" ? ` - ${transaction.network}` : ""}
-                          </p>
-                          <p className="text-xs text-slate-500 truncate">
-                            {transaction.phoneNumber !== "N/A" ? transaction.phoneNumber : transaction.description}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-sm text-slate-900">
-                          ₦{parseFloat(transaction.amount || 0).toLocaleString()}
-                        </p>
-                        <p className="text-xs text-slate-500">
-                          {new Date(transaction.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                        </p>
-                      </div>
+              {/* Recent Transactions */}
+              <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-6 hover:shadow-2xl transition-all duration-300">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-3 rounded-xl shadow-lg">
+                      <FaClipboardList className="w-5 h-5 text-white" />
                     </div>
-                  ))}
+                    <div>
+                      <h2 className="text-xl lg:text-2xl font-bold text-slate-900">
+                        Recent Transactions
+                      </h2>
+                      <p className="text-sm text-slate-600">
+                        Last 5 activities
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <div className="text-center py-8">
-                  <FaClipboardList className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-slate-500 text-sm">No transactions yet</p>
-                </div>
-              )}
+
+                {transactionsLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="h-16 bg-slate-200 rounded-lg animate-pulse"
+                      ></div>
+                    ))}
+                  </div>
+                ) : recentTransactions.length > 0 ? (
+                  <div className="space-y-2">
+                    {recentTransactions.map((transaction, index) => (
+                      <div
+                        key={transaction._id || index}
+                        className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          <div className="bg-purple-100 p-2 rounded-lg">
+                            {transaction.TransactionType === "Data-Purchase" ? (
+                              <FaDatabase className="w-4 h-4 text-purple-600" />
+                            ) : (
+                              <FaMobileAlt className="w-4 h-4 text-purple-600" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-slate-900 text-sm truncate">
+                              {transaction.TransactionType}
+                              {transaction.network !== "N/A"
+                                ? ` - ${transaction.network}`
+                                : ""}
+                            </p>
+                            <p className="text-xs text-slate-500 truncate">
+                              {transaction.phoneNumber !== "N/A"
+                                ? transaction.phoneNumber
+                                : transaction.description}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-sm text-slate-900">
+                            ₦
+                            {parseFloat(
+                              transaction.amount || 0
+                            ).toLocaleString()}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {new Date(transaction.createdAt).toLocaleDateString(
+                              "en-GB",
+                              { day: "2-digit", month: "short" }
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <FaClipboardList className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                    <p className="text-slate-500 text-sm">
+                      No transactions yet
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Info */}
+          <div className="mt-12 lg:mt-16 text-center">
+            <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg">
+              <p className="text-slate-700 font-medium mb-2">
+                Need help? Contact our 24/7 support team
+              </p>
+              <p className="text-sm text-slate-600">
+                All services are available 24/7 • Secure transactions guaranteed
+                • Premium customer support
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Info */}
-        <div className="mt-12 lg:mt-16 text-center">
-          <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg">
-            <p className="text-slate-700 font-medium mb-2">
-              Need help? Contact our 24/7 support team
-            </p>
-            <p className="text-sm text-slate-600">
-              All services are available 24/7 • Secure transactions guaranteed •
-              Premium customer support
-            </p>
-          </div>
-        </div>
+        <style jsx>{`
+          @keyframes blob {
+            0%,
+            100% {
+              transform: translate(0px, 0px) scale(1);
+            }
+            33% {
+              transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+              transform: translate(-20px, 20px) scale(0.9);
+            }
+          }
+          .animate-blob {
+            animation: blob 7s infinite;
+          }
+          .animation-delay-2000 {
+            animation-delay: 2s;
+          }
+          .animation-delay-4000 {
+            animation-delay: 4s;
+          }
+        `}</style>
       </div>
-
-      <style jsx>{`
-        @keyframes blob {
-          0%,
-          100% {
-            transform: translate(0px, 0px) scale(1);
-          }
-          33% {
-            transform: translate(30px, -50px) scale(1.1);
-          }
-          66% {
-            transform: translate(-20px, 20px) scale(0.9);
-          }
-        }
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
-        .animation-delay-2000 {
-          animation-delay: 2s;
-        }
-        .animation-delay-4000 {
-          animation-delay: 4s;
-        }
-      `}</style>
-    </div>
+    </>
   );
 };
 

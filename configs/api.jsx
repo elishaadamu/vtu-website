@@ -12,6 +12,7 @@ export const API_CONFIG = {
       GET: "/account/",
       walletBalance: "/wallet/",
       allWalletTransactions: "/wallet/",
+      ALL_HISTORY: "/transactions/history/",
     },
 
     PROFILE: {

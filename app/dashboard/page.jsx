@@ -28,6 +28,8 @@ const ServicesLayout = () => {
   const { userData, authLoading } = useAppContext();
   const [walletBalance, setWalletBalance] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
 
   const services = [
     {
@@ -103,9 +105,9 @@ const ServicesLayout = () => {
       color: "purple",
     },
     {
-      name: "Orders",
+      name: "Transactions",
       icon: <FaClipboardList className="w-5 h-5" />,
-      path: "/orders",
+      path: "/transactions",
       count: 5,
       color: "yellow",
     },
@@ -149,6 +151,66 @@ const ServicesLayout = () => {
     };
 
     fetchWalletBalance();
+  }, [userData]);
+
+  // Fetch recent transactions
+  useEffect(() => {
+    const fetchRecentTransactions = async () => {
+      if (!userData) return;
+      const userId = userData?.id || userData?._id;
+      if (!userId) return;
+
+      try {
+        setTransactionsLoading(true);
+        const response = await axios.get(
+          apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.ALL_HISTORY + userId)
+        );
+        
+        const allTransactions = response.data?.transactions || response.data?.data || [];
+        console.log("All Transactions:", response.data);
+        // Process transactions to extract network and phone from description
+        const processedTransactions = allTransactions.map(transaction => {
+          let network = transaction.network;
+          let phone = transaction.phone || transaction.phoneNumber;
+          
+          // Extract network from description
+          if (!network && transaction.description) {
+            const networkMatch = transaction.description.match(/:\s*([^-]+)\s*-/);
+            if (networkMatch) {
+              network = networkMatch[1].trim();
+            }
+          }
+          
+          // Extract phone from description
+          if (!phone && transaction.description) {
+            const phoneMatch = transaction.description.match(/(?:for|-)\s*(\d{11})/);
+            if (phoneMatch) {
+              phone = phoneMatch[1];
+            }
+          }
+          
+          return {
+            ...transaction,
+            network: network || "N/A",
+            phoneNumber: phone || "N/A",
+            reference: transaction.transactionReference || transaction.reference || transaction.transactionId
+          };
+        });
+        
+        // Get the 5 most recent transactions
+        const recent = processedTransactions
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5);
+        
+        setRecentTransactions(recent);
+      } catch (error) {
+        console.error("Error fetching recent transactions:", error);
+      } finally {
+        setTransactionsLoading(false);
+      }
+    };
+
+    fetchRecentTransactions();
   }, [userData]);
 
 
@@ -330,6 +392,72 @@ const ServicesLayout = () => {
                   </Link>
                 ))}
               </div>
+            </div>
+
+            {/* Recent Transactions */}
+            <div className="bg-white/70 backdrop-blur-md rounded-2xl shadow-xl border border-white/50 p-6 hover:shadow-2xl transition-all duration-300">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-600 p-3 rounded-xl shadow-lg">
+                    <FaClipboardList className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl lg:text-2xl font-bold text-slate-900">
+                      Recent Transactions
+                    </h2>
+                    <p className="text-sm text-slate-600">Last 5 activities</p>
+                  </div>
+                </div>
+              
+              </div>
+
+              {transactionsLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-16 bg-slate-200 rounded-lg animate-pulse"></div>
+                  ))}
+                </div>
+              ) : recentTransactions.length > 0 ? (
+                <div className="space-y-2">
+                  {recentTransactions.map((transaction, index) => (
+                    <div
+                      key={transaction._id || index}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200"
+                    >
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className="bg-purple-100 p-2 rounded-lg">
+                          {transaction.TransactionType === "Data-Purchase" ? (
+                            <FaDatabase className="w-4 h-4 text-purple-600" />
+                          ) : (
+                            <FaMobileAlt className="w-4 h-4 text-purple-600" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-slate-900 text-sm truncate">
+                            {transaction.TransactionType}{transaction.network !== "N/A" ? ` - ${transaction.network}` : ""}
+                          </p>
+                          <p className="text-xs text-slate-500 truncate">
+                            {transaction.phoneNumber !== "N/A" ? transaction.phoneNumber : transaction.description}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-sm text-slate-900">
+                          ₦{parseFloat(transaction.amount || 0).toLocaleString()}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {new Date(transaction.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <FaClipboardList className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-slate-500 text-sm">No transactions yet</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

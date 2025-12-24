@@ -56,7 +56,7 @@ export default function DataHistory() {
     try {
       // Using wallet transactions endpoint
       const apiLink = apiUrl(
-        API_CONFIG.ENDPOINTS.ACCOUNT.allWalletTransactions + "transactions/" + userId
+        API_CONFIG.ENDPOINTS.DATA.HISTORY + userId
       );
       const response = await axios.get(apiLink, {
         withCredentials: true,
@@ -69,24 +69,57 @@ export default function DataHistory() {
       // Filter for data transactions only
       const allTransactions = response.data?.transactions || response.data?.data || [];
       const dataTransactions = allTransactions.filter(
-        (t) => t.type === "data" || t.category === "data" || t.service === "data"
+        (t) => t.TransactionType === "Data-Purchase" || 
+               t.type === "data" || 
+               t.category === "data" || 
+               t.service === "data"
       );
       
-      setApiData(dataTransactions);
+      // Extract network and phone from description if not directly available
+      const processedTransactions = dataTransactions.map(transaction => {
+        // Extract network from description (e.g., "Data purchase: mtn_gifting_data...")
+        let network = transaction.network;
+        let phone = transaction.phone || transaction.phoneNumber;
+        
+        if (!network && transaction.description) {
+          const networkMatch = transaction.description.match(/:\s*([^-]+)\s*-/);
+          if (networkMatch) {
+            network = networkMatch[1].trim();
+          }
+        }
+        
+        // Extract phone from description (e.g., "...for 07067206984")
+        if (!phone && transaction.description) {
+          const phoneMatch = transaction.description.match(/for\s+(\d+)/);
+          if (phoneMatch) {
+            phone = phoneMatch[1];
+          }
+        }
+        
+        return {
+          ...transaction,
+          network: network || "N/A",
+          phoneNumber: phone || transaction.phoneNumber || "N/A",
+          reference: transaction.transactionReference || transaction.reference || transaction.transactionId,
+          plan: transaction.plan || transaction.description || "Data Plan"
+        };
+      });
+      
+      setApiData(processedTransactions);
 
       // Calculate stats
-      const successful = dataTransactions.filter(
+      const successful = processedTransactions.filter(
         (t) => t.status?.toLowerCase().includes("success")
       ).length;
-      const failed = dataTransactions.filter(
+      const failed = processedTransactions.filter(
         (t) => t.status?.toLowerCase().includes("fail")
       ).length;
-      const totalAmount = dataTransactions
+      const totalAmount = processedTransactions
         .filter((t) => t.status?.toLowerCase().includes("success"))
         .reduce((sum, t) => sum + (parseFloat(t.amount) || 0), 0);
 
       setStats({
-        total: dataTransactions.length,
+        total: processedTransactions.length,
         totalAmount,
         successful,
         failed,
@@ -386,18 +419,10 @@ export default function DataHistory() {
                         Phone Number
                       </th>
                       <TableHeader
-                        label="Plan"
-                        sortKey="plan"
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                      />
-                      <TableHeader
                         label="Amount"
                         sortKey="amount"
                         className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                       />
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Status
-                      </th>
                       <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Actions
                       </th>
@@ -437,24 +462,9 @@ export default function DataHistory() {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="text-sm text-gray-700">
-                            {transaction.plan || transaction.description || "Data Plan"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
                           <span className="text-sm font-bold text-gray-900">
                             ₦{parseFloat(transaction.amount || 0).toLocaleString()}
                           </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <Badge
-                            status={getStatusColor(transaction.status)}
-                            text={
-                              <span className="text-sm font-medium capitalize">
-                                {transaction.status || "Unknown"}
-                              </span>
-                            }
-                          />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center gap-2">

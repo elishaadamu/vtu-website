@@ -1,76 +1,20 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import axios from "axios";
+import { message } from "antd";
 import { useAppContext } from "@/context/AppContext";
-import { apiUrl, API_CONFIG } from "@/configs/api";
+import { apiUrl, API_CONFIG, apiUrlData } from "@/configs/api";
 import {
   FaWallet,
   FaMobileAlt,
   FaRegMoneyBillAlt,
   FaWifi,
   FaCalendarAlt,
+  FaEye,
+  FaEyeSlash,
 } from "react-icons/fa";
 import { MdSignalCellularAlt } from "react-icons/md";
 
-// Mock data for plans - in a real app, this would come from an API
-const allPlans = [
-  {
-    planId: "mtn-1",
-    networkId: "mtn",
-    name: "1GB Data",
-    validity: "30 Days",
-    price: 300,
-  },
-  {
-    planId: "mtn-2",
-    networkId: "mtn",
-    name: "2.5GB Data",
-    validity: "30 Days",
-    price: 500,
-  },
-  {
-    planId: "mtn-3",
-    networkId: "mtn",
-    name: "5GB Data",
-    validity: "30 Days",
-    price: 1000,
-  },
-  {
-    planId: "glo-1",
-    networkId: "glo",
-    name: "1.5GB Data",
-    validity: "30 Days",
-    price: 350,
-  },
-  {
-    planId: "glo-2",
-    networkId: "glo",
-    name: "3GB Data",
-    validity: "30 Days",
-    price: 550,
-  },
-  {
-    planId: "9mobile-1",
-    networkId: "9mobile",
-    name: "1GB Data",
-    validity: "30 Days",
-    price: 320,
-  },
-  {
-    planId: "airtel-1",
-    networkId: "airtel",
-    name: "750MB Data",
-    validity: "14 Days",
-    price: 250,
-  },
-  {
-    planId: "airtel-2",
-    networkId: "airtel",
-    name: "2GB Data",
-    validity: "30 Days",
-    price: 500,
-  },
-];
 
 const DataPage = () => {
   const { userData } = useAppContext();
@@ -78,9 +22,37 @@ const DataPage = () => {
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");
+  const [pin, setPin] = useState(["", "", "", ""]);
+  const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
-  const [plans, setPlans] = useState([]); // This would be fetched from the API
+  const [networksLoading, setNetworksLoading] = useState(false);
+  const [plans, setPlans] = useState([]);
+  const [networks, setNetworks] = useState([]);
+
+  // Create refs for PIN inputs
+  const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
+
+  // Handle PIN input change
+  const handlePinChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return; // Only allow digits
+
+    const newPin = [...pin];
+    newPin[index] = value;
+    setPin(newPin);
+
+    // Auto-focus next input
+    if (value && index < 3) {
+      pinRefs[index + 1].current?.focus();
+    }
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !pin[index] && index > 0) {
+      pinRefs[index - 1].current?.focus();
+    }
+  };
 
   // Fetch wallet balance
   useEffect(() => {
@@ -107,84 +79,56 @@ const DataPage = () => {
     fetchWalletBalance();
   }, [userData]);
 
-  // Fetch all data plans from API on initial load
+  // Fetch networks from external API on initial load
   useEffect(() => {
-    const fetchDataPlans = async () => {
-      setLoading(true);
+    const fetchNetworks = async () => {
+      setNetworksLoading(true);
       try {
         const response = await axios.get(
-          apiUrl(API_CONFIG.ENDPOINTS.DATA.GET_ALL)
+          apiUrlData(API_CONFIG.ENDPOINTS.DATA.GET_ALL)
         );
-        console.log("Data Plans Response:", response.data);
+       
         
-        // API returns { count: number, data: [...] }
-        if (response.data.data && Array.isArray(response.data.data)) {
-          // Map API fields to component's expected structure
-          const mappedPlans = response.data.data
-            .filter(plan => plan.isActive) // Only show active plans
-            .map(plan => ({
-              planId: plan.planId,
-              networkId: plan.network.toLowerCase(), // Convert to lowercase for matching
-              name: plan.planName,
-              validity: `${plan.validity} Days`,
-              price: plan.price,
-              _id: plan._id
-            }));
-          setPlans(mappedPlans);
-        } else {
-          // Fallback to default plans if API doesn't return expected format
-          console.warn("Unexpected API response format, using fallback plans");
-          setPlans(allPlans);
+        if (response.data.networks && Array.isArray(response.data.networks)) {
+          setNetworks(response.data.networks);
         }
       } catch (error) {
-        console.error("Error fetching data plans:", error);
-        // Use default plans on error
-        setPlans(allPlans);
+        console.error("Error fetching networks:", error);
       } finally {
-        setLoading(false);
+        setNetworksLoading(false);
       }
     };
 
-    fetchDataPlans();
+    fetchNetworks();
   }, []);
 
   // Fetch network-specific plans when network is selected
   useEffect(() => {
-    if (!selectedNetwork) return;
+    if (!selectedNetwork) {
+      setPlans([]);
+      return;
+    }
 
     const fetchNetworkPlans = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          apiUrl(`${API_CONFIG.ENDPOINTS.DATA.GET_BY_NETWORK}/${selectedNetwork.toUpperCase()}`)
+          apiUrlData(API_CONFIG.ENDPOINTS.DATA.GET_BY_NETWORK + "=" + selectedNetwork)
         );
-        console.log(`${selectedNetwork} Plans Response:`, response.data);
+      
         
-        // API returns { count: number, data: [...] }
-        if (response.data.data && Array.isArray(response.data.data)) {
-          // Map API fields to component's expected structure
-          const mappedPlans = response.data.data
-            .filter(plan => plan.isActive) // Only show active plans
-            .map(plan => ({
-              planId: plan.planId,
-              networkId: plan.network.toLowerCase(), // Convert to lowercase for matching
-              name: plan.planName,
-              validity: `${plan.validity} Days`,
-              price: plan.price,
-              _id: plan._id
-            }));
-          setPlans(mappedPlans);
+        // API returns array of plans or { plans: [...] }
+        const plansData = Array.isArray(response.data) ? response.data : response.data.plans;
+        
+        if (plansData && Array.isArray(plansData)) {
+          setPlans(plansData);
         } else {
-          // Fallback to filtering all plans if API doesn't return expected format
-          console.warn("Unexpected API response format, filtering from all plans");
-          const filtered = allPlans.filter(plan => plan.networkId === selectedNetwork);
-          setPlans(filtered.length > 0 ? filtered : allPlans);
+          console.warn("Unexpected API response format");
+          setPlans([]);
         }
       } catch (error) {
         console.error(`Error fetching ${selectedNetwork} plans:`, error);
-        // Fallback to filtering from all plans on error
-        const filtered = allPlans.filter(plan => plan.networkId === selectedNetwork);
-        setPlans(filtered.length > 0 ? filtered : allPlans);
+        setPlans([]);
       } finally {
         setLoading(false);
       }
@@ -193,47 +137,74 @@ const DataPage = () => {
     fetchNetworkPlans();
   }, [selectedNetwork]);
 
-  const handleNetworkSelect = (networkId) => {
-    setSelectedNetwork(networkId);
+  const handleNetworkSelect = (identifier) => {
+    setSelectedNetwork(identifier);
     setSelectedPlanId(""); // Reset plan selection when network changes
   };
 
-  const handlePurchase = (e) => {
+  const handlePurchase = async (e) => {
     e.preventDefault();
-    const selectedPlan = plans.find((p) => p.planId === selectedPlanId);
-    if (!selectedPlan) {
-      alert("Please select a valid data plan.");
+    
+    const userId = userData?.id || userData?._id;
+    if (!userId) {
+      message.error("User not found. Please log in again.");
       return;
     }
-    console.log({
+
+    const selectedPlan = plans.find((p) => p.plan_code === selectedPlanId);
+    if (!selectedPlan) {
+      message.error("Please select a valid data plan.");
+      return;
+    }
+
+    const payload = {
       network: selectedNetwork,
-      phoneNumber,
-      plan: selectedPlan,
-      price: selectedPlan.price,
-    });
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+      phone: phoneNumber,
+      plan_code: selectedPlanId,
+      userId,
+      amount: selectedPlan.amount,
+      pin: pin.join("")
+    };
+    console.log(payload);
+
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        apiUrl(API_CONFIG.ENDPOINTS.DATA.CREATE),
+        payload
+      );
+      
+      message.success("Data subscription successful!");
+      
+      // Reset form
+      setSelectedNetwork("");
+      setPhoneNumber("");
+      setSelectedPlanId("");
+      setPin(["", "", "", ""]);
+      setPlans([]);
+      
+      // Refresh wallet balance
+      const balanceResponse = await axios.get(
+        apiUrl(
+          API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
+        )
+      );
+      setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
+    } catch (error) {
+      console.error("Error purchasing data:", error);
+      message.error(error.response?.data?.message || "Failed to purchase data. Please try again.");
+    } finally {
       setLoading(false);
-      alert("Data purchase successful!");
-    }, 2000);
+    }
   };
 
-  const networks = [
-    { id: "mtn", name: "MTN" },
-    { id: "glo", name: "Glo" },
-    { id: "9mobile", name: "9mobile" },
-    { id: "airtel", name: "Airtel" },
-  ];
-
   const filteredPlans = useMemo(() => {
-    if (!selectedNetwork) return [];
-    return plans.filter((plan) => plan.networkId === selectedNetwork);
-  }, [selectedNetwork, plans]);
+    return plans;
+  }, [plans]);
 
   const selectedPlanDetails = useMemo(() => {
     if (!selectedPlanId) return null;
-    return plans.find((p) => p.planId === selectedPlanId);
+    return plans.find((p) => p.plan_code === selectedPlanId);
   }, [selectedPlanId, plans]);
 
   return (
@@ -275,25 +246,33 @@ const DataPage = () => {
             <label className="block text-sm font-medium text-slate-700 mb-2">
               1. Select Network
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {networks.map((net) => (
-                <button
-                  key={net.id}
-                  type="button"
-                  onClick={() => handleNetworkSelect(net.id)}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all duration-200 ${
-                    selectedNetwork === net.id
-                      ? "border-purple-500 bg-purple-50 shadow-md"
-                      : "border-slate-200 bg-slate-50 hover:border-purple-300"
-                  }`}
-                >
-                  <MdSignalCellularAlt className="w-5 h-5 text-slate-500" />
-                  <span className="font-semibold text-slate-800">
-                    {net.name}
-                  </span>
-                </button>
-              ))}
-            </div>
+            {networksLoading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-12 bg-slate-200 rounded-lg animate-pulse"></div>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {networks.map((net) => (
+                  <button
+                    key={net.identifier}
+                    type="button"
+                    onClick={() => handleNetworkSelect(net.identifier)}
+                    className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all duration-200 ${
+                      selectedNetwork === net.identifier
+                        ? "border-purple-500 bg-purple-50 shadow-md"
+                        : "border-slate-200 bg-slate-50 hover:border-purple-300"
+                    }`}
+                  >
+                    <MdSignalCellularAlt className="w-5 h-5 text-slate-500" />
+                    <span className="font-semibold text-slate-800 text-xs">
+                      {net.name}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Phone Number Input */}
@@ -338,9 +317,9 @@ const DataPage = () => {
                       ? "Choose a data plan"
                       : "No plans available for this network"}
                   </option>
-                  {filteredPlans.map((plan) => (
-                    <option key={plan.planId} value={plan.planId}>
-                      {plan.name} ({plan.validity}) - ₦{plan.price}
+                  {filteredPlans.map((plan, index) => (
+                    <option key={`${plan.plan_code}-${index}`} value={plan.plan_code}>
+                      {plan.label} - ₦{plan.amount}
                     </option>
                   ))}
                 </select>
@@ -353,17 +332,53 @@ const DataPage = () => {
             <div className="bg-purple-50 border-l-4 border-purple-500 p-4 rounded-md flex justify-between items-center">
               <div>
                 <p className="font-semibold text-slate-800">
-                  {selectedPlanDetails.name}
+                  {selectedPlanDetails.label}
                 </p>
-                <div className="flex items-center gap-4 text-sm text-slate-600 mt-1">
-                  <span className="flex items-center gap-1.5">
-                    <FaCalendarAlt /> {selectedPlanDetails.validity}
-                  </span>
-                </div>
               </div>
               <p className="text-xl font-bold text-purple-600">
-                ₦{selectedPlanDetails.price}
+                ₦{selectedPlanDetails.amount}
               </p>
+            </div>
+          )}
+
+          {/* PIN Input */}
+          {selectedPlanId && (
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  4. Transaction PIN
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowPin(!showPin)}
+                  className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                >
+                  {showPin ? (
+                    <>
+                      <FaEyeSlash /> Hide PIN
+                    </>
+                  ) : (
+                    <>
+                      <FaEye /> Show PIN
+                    </>
+                  )}
+                </button>
+              </div>
+              <div className="flex gap-3 justify-center">
+                {pin.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={pinRefs[index]}
+                    type={showPin ? "text" : "password"}
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handlePinChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-14 h-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none"
+                    required
+                  />
+                ))}
+              </div>
             </div>
           )}
 

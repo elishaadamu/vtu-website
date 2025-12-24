@@ -30,6 +30,7 @@ const ServicesLayout = () => {
   const [loading, setLoading] = useState(false);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
+  const [getCount, setgetCount] = useState(0);
 
   const services = [
     {
@@ -83,36 +84,36 @@ const ServicesLayout = () => {
   ];
 
   const transactions = [
-    {
-      name: "My Orders",
-      icon: <FaShoppingBag className="w-5 h-5" />,
-      path: "/transactions/orders",
-      count: 12,
-      color: "blue",
-    },
-    {
-      name: "Wallet Summary",
-      icon: <FaWallet className="w-5 h-5" />,
-      path: "/transactions/wallet",
-      count: null,
-      color: "green",
-    },
-    {
-      name: "Dashboard",
-      icon: <FaChartLine className="w-5 h-5" />,
-      path: "/dashboard",
-      count: null,
-      color: "purple",
-    },
+    // {
+    //   name: "My Orders",
+    //   icon: <FaShoppingBag className="w-5 h-5" />,
+    //   path: "/transactions/orders",
+    //   count: 12,
+    //   color: "blue",
+    // },
+    // {
+    //   name: "Wallet Summary",
+    //   icon: <FaWallet className="w-5 h-5" />,
+    //   path: "/transactions/wallet",
+    //   count: null,
+    //   color: "green",
+    // },
+    // {
+    //   name: "Dashboard",
+    //   icon: <FaChartLine className="w-5 h-5" />,
+    //   path: "/dashboard",
+    //   count: null,
+    //   color: "purple",
+    // },
     {
       name: "Transactions",
       icon: <FaClipboardList className="w-5 h-5" />,
-      path: "/transactions",
-      count: 5,
+      path: "",
+      count: getCount,
       color: "yellow",
     },
     {
-      name: "Payments",
+      name: "Fundings",
       icon: <FaCreditCard className="w-5 h-5" />,
       path: "/payments",
       count: 8,
@@ -165,7 +166,7 @@ const ServicesLayout = () => {
         const response = await axios.get(
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.ALL_HISTORY + userId)
         );
-        
+        setgetCount(response.data?.count);
         const allTransactions = response.data?.transactions || response.data?.data || [];
         console.log("All Transactions:", response.data);
         // Process transactions to extract network and phone from description

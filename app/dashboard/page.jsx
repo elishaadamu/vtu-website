@@ -35,7 +35,7 @@ const ServicesLayout = () => {
   const services = [
     {
       name: "Data",
-      icon: <FaDatabase className="w-3 h-3" />,
+      icon: <FaDatabase className="w-5 h-5" />,
       description: "Mobile data plans and bundles",
       path: "dashboard/services/data",
       gradient: "from-blue-500 to-cyan-500",
@@ -43,7 +43,7 @@ const ServicesLayout = () => {
     },
     {
       name: "Airtime",
-      icon: <FaMobileAlt className="w-3 h-3" />,
+      icon: <FaMobileAlt className="w-5 h-5" />,
       description: "Mobile airtime top-up",
       path: "dashboard/services/airtime",
       gradient: "from-purple-500 to-pink-500",
@@ -51,7 +51,7 @@ const ServicesLayout = () => {
     },
     {
       name: "Electric",
-      icon: <FaBolt className="w-3 h-3" />,
+      icon: <FaBolt className="w-5 h-5" />,
       description: "Electricity bill payments",
       path: "dashboard/services/electric",
       gradient: "from-yellow-500 to-orange-500",
@@ -59,7 +59,7 @@ const ServicesLayout = () => {
     },
     {
       name: "Cable",
-      icon: <FaTv className="w-3 h-3" />,
+      icon: <FaTv className="w-5 h-5" />,
       description: "Cable TV subscriptions",
       path: "dashboard/services/cable",
       gradient: "from-red-500 to-rose-500",
@@ -67,7 +67,7 @@ const ServicesLayout = () => {
     },
     {
       name: "BVN Slip",
-      icon: <FaFileAlt className="w-3 h-3" />,
+      icon: <FaFileAlt className="w-5 h-5" />,
       description: "Bank Verification Number services",
       path: "dashboard/services/bvn-slip",
       gradient: "from-green-500 to-emerald-500",
@@ -75,7 +75,7 @@ const ServicesLayout = () => {
     },
     {
       name: "NIN Slip",
-      icon: <FaIdCard className="w-3 h-3" />,
+      icon: <FaIdCard className="w-5 h-5" />,
       description: "National Identity Number services",
       path: "dashboard/services/nin-slip",
       gradient: "from-indigo-500 to-blue-500",

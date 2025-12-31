@@ -35,7 +35,7 @@ const ServicesLayout = () => {
   const services = [
     {
       name: "Data",
-      icon: <FaDatabase className="w-7 h-7" />,
+      icon: <FaDatabase className="w-3 h-3" />,
       description: "Mobile data plans and bundles",
       path: "dashboard/services/data",
       gradient: "from-blue-500 to-cyan-500",
@@ -43,7 +43,7 @@ const ServicesLayout = () => {
     },
     {
       name: "Airtime",
-      icon: <FaMobileAlt className="w-7 h-7" />,
+      icon: <FaMobileAlt className="w-3 h-3" />,
       description: "Mobile airtime top-up",
       path: "dashboard/services/airtime",
       gradient: "from-purple-500 to-pink-500",
@@ -51,7 +51,7 @@ const ServicesLayout = () => {
     },
     {
       name: "Electric",
-      icon: <FaBolt className="w-7 h-7" />,
+      icon: <FaBolt className="w-3 h-3" />,
       description: "Electricity bill payments",
       path: "dashboard/services/electric",
       gradient: "from-yellow-500 to-orange-500",
@@ -59,7 +59,7 @@ const ServicesLayout = () => {
     },
     {
       name: "Cable",
-      icon: <FaTv className="w-7 h-7" />,
+      icon: <FaTv className="w-3 h-3" />,
       description: "Cable TV subscriptions",
       path: "dashboard/services/cable",
       gradient: "from-red-500 to-rose-500",
@@ -67,7 +67,7 @@ const ServicesLayout = () => {
     },
     {
       name: "BVN Slip",
-      icon: <FaFileAlt className="w-7 h-7" />,
+      icon: <FaFileAlt className="w-3 h-3" />,
       description: "Bank Verification Number services",
       path: "dashboard/services/bvn-slip",
       gradient: "from-green-500 to-emerald-500",
@@ -75,7 +75,7 @@ const ServicesLayout = () => {
     },
     {
       name: "NIN Slip",
-      icon: <FaIdCard className="w-7 h-7" />,
+      icon: <FaIdCard className="w-3 h-3" />,
       description: "National Identity Number services",
       path: "dashboard/services/nin-slip",
       gradient: "from-indigo-500 to-blue-500",
@@ -230,7 +230,7 @@ const ServicesLayout = () => {
           <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+        <div className="relative max-w-7xl mx-auto  sm:px-6 lg:px-8 ">
           {/* Header Section */}
           <div className="mb-10 lg:mb-8">
             <div>
@@ -303,7 +303,7 @@ const ServicesLayout = () => {
                       <FaDatabase className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl lg:text-2xl font-bold text-slate-900">
+                      <h2 className="text-xl lg:text-2xl font-bold text-slate-900">
                         Our Services
                       </h2>
                       <p className="text-sm text-slate-600 mt-1">
@@ -318,7 +318,7 @@ const ServicesLayout = () => {
                     <Link
                       key={index}
                       href={service.path}
-                      className="group relative bg-white rounded-xl p-5 lg:p-6 transition-all duration-300 hover:scale-105 hover:shadow-md border border-slate-100 overflow-hidden"
+                      className="group relative bg-white rounded-xl p-2 lg:p-6 transition-all duration-300 hover:scale-105 hover:shadow-md border border-slate-100 overflow-hidden"
                     >
                       {/* Gradient Background on Hover */}
                       <div
@@ -326,26 +326,19 @@ const ServicesLayout = () => {
                       ></div>
 
                       <div className="relative z-10">
-                        <div className="flex flex-row md:flex-row justify-center items-center gap-4 mb-3">
+                        <div className="flex flex-row md:flex-row justify-center items-center gap-2 py-4">
                           <div
                             className={`bg-gradient-to-br ${service.gradient} p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 text-white`}
                           >
                             {service.icon}
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-bold text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
+                            <h3 className="font-bold text-[11px] md:text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
                               {service.name}
                             </h3>
                           </div>
                         </div>
-                        <div className="flex items-center justify-start mt-4">
-                          <span
-                            className={`text-sm font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent flex items-center gap-1 group-hover:gap-2 transition-all`}
-                          >
-                            Access now
-                            <FaArrowRight className="w-3 h-3" />
-                          </span>
-                        </div>
+                       
                       </div>
                     </Link>
                   ))}
@@ -374,7 +367,7 @@ const ServicesLayout = () => {
                     <Link
                       key={index}
                       href={item.path}
-                      className="group flex items-center justify-between p-4 rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
+                      className="group flex items-center justify-between  rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -429,50 +422,87 @@ const ServicesLayout = () => {
                     ))}
                   </div>
                 ) : recentTransactions.length > 0 ? (
-                  <div className="space-y-2">
-                    {recentTransactions.map((transaction, index) => (
-                      <div
-                        key={transaction._id || index}
-                        className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-all border border-transparent hover:border-slate-200"
-                      >
-                        <div className="flex items-center gap-3 flex-1">
-                          <div className="bg-purple-100 p-2 rounded-lg">
-                            {transaction.TransactionType === "Data-Purchase" ? (
-                              <FaDatabase className="w-4 h-4 text-purple-600" />
-                            ) : (
-                              <FaMobileAlt className="w-4 h-4 text-purple-600" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-slate-900 text-sm truncate">
-                              {transaction.TransactionType}
-                              {transaction.network !== "N/A"
-                                ? ` - ${transaction.network}`
-                                : ""}
-                            </p>
-                            <p className="text-xs text-slate-500 truncate">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-slate-200">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                          >
+                            Transaction
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                          >
+                            Description
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                          >
+                            Amount
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                          >
+                            Date
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-slate-200">
+                        {recentTransactions.map((transaction, index) => (
+                          <tr
+                            key={transaction._id || index}
+                            className="hover:bg-slate-50 transition-colors"
+                          >
+                            <td className="px-4 py-3 whitespace-nowrap">
+                              <div className="flex items-center gap-3">
+                                <div className="bg-purple-100 p-2 rounded-lg flex-shrink-0">
+                                  {transaction.TransactionType ===
+                                  "Data-Purchase" ? (
+                                    <FaDatabase className="w-4 h-4 text-purple-600" />
+                                  ) : (
+                                    <FaMobileAlt className="w-4 h-4 text-purple-600" />
+                                  )}
+                                </div>
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-medium text-slate-900">
+                                    {transaction.TransactionType}
+                                  </span>
+                                  <span className="text-xs text-slate-500">
+                                    {transaction.network !== "N/A"
+                                      ? transaction.network
+                                      : "-"}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-600">
                               {transaction.phoneNumber !== "N/A"
                                 ? transaction.phoneNumber
                                 : transaction.description}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-sm text-slate-900">
-                            ₦
-                            {parseFloat(
-                              transaction.amount || 0
-                            ).toLocaleString()}
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            {new Date(transaction.createdAt).toLocaleDateString(
-                              "en-GB",
-                              { day: "2-digit", month: "short" }
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-bold text-slate-900">
+                              ₦
+                              {parseFloat(
+                                transaction.amount || 0
+                              ).toLocaleString()}
+                            </td>
+                            <td className="px-4 py-3 whitespace-nowrap text-right text-xs text-slate-500">
+                              {new Date(
+                                transaction.createdAt
+                              ).toLocaleDateString("en-GB", {
+                                day: "2-digit",
+                                month: "short",
+                              })}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 ) : (
                   <div className="text-center py-8">

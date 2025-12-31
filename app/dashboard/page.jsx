@@ -322,18 +322,18 @@ const ServicesLayout = () => {
                     >
                       {/* Gradient Background on Hover */}
                       <div
-                        className={`absolute inset-0 bg-blue-500  opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
+                        className={`absolute inset-0 border-1  opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
                       ></div>
 
                       <div className="relative z-10">
                         <div className="flex flex-row md:flex-row justify-center items-center gap-2 py-4">
                           <div
-                            className={`text-blue-500 p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300`}
+                            className={`text-blue-600 bg-blue-50 p-3 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300`}
                           >
                             {service.icon}
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-bold text-[11px] md:text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
+                            <h3 className="font-bold text-[13px] md:text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
                               {service.name}
                             </h3>
                           </div>

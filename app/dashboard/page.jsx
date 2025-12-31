@@ -333,7 +333,7 @@ const ServicesLayout = () => {
                             {service.icon}
                           </div>
                           <div className="flex-1">
-                            <h3 className="font-bold text-[13px] md:text-lg text-center md:text-left text-slate-900 group-hover:text-slate-800 mb-1">
+                            <h3 className=" text-[13px] text-blue-950 md:text-lg text-center md:text-left group-hover:text-slate-800 mb-1">
                               {service.name}
                             </h3>
                           </div>

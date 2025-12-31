@@ -322,13 +322,13 @@ const ServicesLayout = () => {
                     >
                       {/* Gradient Background on Hover */}
                       <div
-                        className={`absolute inset-0 bg-gradient-to-br ${service.bgGradient} opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
+                        className={`absolute inset-0 bg-blue-500  opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
                       ></div>
 
                       <div className="relative z-10">
                         <div className="flex flex-row md:flex-row justify-center items-center gap-2 py-4">
                           <div
-                            className={`bg-gradient-to-br ${service.gradient} p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 text-white`}
+                            className={`text-blue-500 p-2 md:p-3.5 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300`}
                           >
                             {service.icon}
                           </div>
@@ -369,7 +369,7 @@ const ServicesLayout = () => {
                       href={item.path}
                       className="group flex items-center justify-between  rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         <div
                           className={`bg-${item.color}-100 p-2.5 rounded-lg group-hover:bg-${item.color}-200 transition-colors text-${item.color}-600`}
                         >

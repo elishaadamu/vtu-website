@@ -160,7 +160,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
                     },
                     {
                       href: "/dashboard/services/electric",
-                      label: "Bill Payment",
+                      label: "Electricity Bills",
                       icon: FaBolt,
                     },
                     {
@@ -225,7 +225,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
                     },
                     {
                       href: "/dashboard/history/cable",
-                      label: "Cable History",
+                      label: "Cable bill History",
                       icon: FaTv,
                     },
                     {
@@ -235,7 +235,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
                     },
                     {
                       href: "/dashboard/history/electric",
-                      label: "Electric History",
+                      label: "Electric bill History",
                       icon: FaBolt,
                     },
                   ].map(({ href, label, icon: Icon }) => (

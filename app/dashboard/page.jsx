@@ -232,7 +232,7 @@ const ServicesLayout = () => {
 
         <div className="relative max-w-7xl mx-auto  sm:px-6 lg:px-8 ">
           {/* Header Section */}
-          <div className="mb-10 lg:mb-8">
+          {/* <div className="mb-10 lg:mb-8">
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold mb-3">
                 {authLoading ? (
@@ -255,7 +255,7 @@ const ServicesLayout = () => {
                 All your premium services and transactions in one place
               </p>
             </div>
-          </div>
+          </div> */}
 
           {/* Wallet Carousel Section */}
           <WalletCard
@@ -324,7 +324,6 @@ const ServicesLayout = () => {
                       <div
                         className={`absolute inset-0 border-1  opacity-0 group-hover:opacity-100  transition-opacity duration-300`}
                       ></div>
-
                       <div className="relative z-10">
                         <div className="flex flex-row md:flex-row justify-center items-center gap-2 py-4">
                           <div

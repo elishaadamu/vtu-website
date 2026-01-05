@@ -51,7 +51,7 @@ const DashboardLayout = ({ children }) => {
             API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
           )
         );
-        const pin = response.data?.wallet?.pi;
+        const pin = response.data?.wallet?.pin;
         setWalletPin(pin);
 
         // Show reminder if PIN doesn't exist

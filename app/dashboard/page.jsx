@@ -18,10 +18,14 @@ import {
   FaArrowUp,
   FaChevronLeft,
   FaChevronRight,
+  FaPlus,
+  FaUserCircle,
+  FaUniversity,
 } from "react-icons/fa";
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { useAppContext } from "@/context/AppContext";
+import { toast } from "react-toastify";
 import WalletCard from "@/components/WalletCard";
 
 const ServicesLayout = () => {
@@ -31,6 +35,9 @@ const ServicesLayout = () => {
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [transactionsLoading, setTransactionsLoading] = useState(false);
   const [getCount, setgetCount] = useState(0);
+  const [showCreateAccount, setShowCreateAccount] = useState(false);
+  const [nin, setNin] = useState("");
+  const [accountDetails, setAccountDetails] = useState(null);
 
   const services = [
     {
@@ -143,9 +150,12 @@ const ServicesLayout = () => {
           )
         );
         console.log("Wallet Balance Response:", response.data);
-        setWalletBalance(response.data?.wallet?.balance);
+        setWalletBalance(response.data?.wallet?.balance || 0);
+        setAccountDetails(response.data?.account || null);
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
+        setWalletBalance(0);
+        setAccountDetails(null);
       } finally {
         setLoading(false);
       }
@@ -220,6 +230,41 @@ const ServicesLayout = () => {
     fetchRecentTransactions();
   }, [userData]);
 
+  // Handle Create Account
+  const handleCreateAccount = async (e) => {
+    e.preventDefault();
+    if (!nin.trim()) {
+      toast.error("Please enter your NIN");
+      return;
+    }
+
+    const userId = userData?.id || userData?._id;
+    if (!userId) {
+      toast.error("User not found");
+      return;
+    }
+
+    setLoading(true);
+    const payload = { nin };
+
+    try {
+      const response = await axios.post(
+        apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.CREATE + userId),
+        payload
+      );
+      console.log("Account created:", response.data);
+      toast.success("Account created successfully!");
+      setShowCreateAccount(false);
+      setNin("");
+      setAccountDetails(response.data?.wallet);
+    } catch (error) {
+      console.error("Error creating account:", error);
+      toast.error(error.response?.data?.message || "Failed to create account.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
@@ -258,10 +303,117 @@ const ServicesLayout = () => {
           </div> */}
 
           {/* Wallet Carousel Section */}
-          <WalletCard
-            walletBalance={walletBalance}
-            isLoading={loading || authLoading}
-          />
+          {accountDetails ? (
+            <div className="mb-10 lg:mb-14">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-3xl shadow-lg p-6 lg:p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500 rounded-full opacity-20 -mr-20 -mt-20"></div>
+
+                <div className="relative z-10">
+                  {/* Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
+                    <div className="mb-3 sm:mb-0">
+                      <h2 className="text-xl lg:text-2xl font-bold flex items-center gap-3 mb-2">
+                        <FaWallet className="w-6 h-6" />
+                        Your Virtual Account
+                      </h2>
+                      <p className="text-blue-100 text-sm">
+                        Easily receive payments and manage your funds
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Account Details Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-white/20 p-3 rounded-lg">
+                          <FaUserCircle className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-blue-100 text-xs mb-1">
+                            Account Name
+                          </p>
+                          <p className="text-white font-semibold text-sm">
+                            {accountDetails?.virtualAccountName || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-white/20 p-3 rounded-lg">
+                          <FaCreditCard className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-blue-100 text-xs mb-1">
+                            Account Number
+                          </p>
+                          <p className="text-white font-semibold text-sm">
+                            {accountDetails?.virtualAccountNumber || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-white/20 p-3 rounded-lg">
+                          <FaUniversity className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-blue-100 text-xs mb-1">
+                            Bank Name
+                          </p>
+                          <p className="text-white font-semibold text-sm">
+                            {accountDetails?.virtualBanktName || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Balance Section */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-4">
+                    <p className="text-blue-100 text-sm mb-2">
+                      Current Balance
+                    </p>
+                    <h3 className="text-3xl font-bold text-white">
+                      ₦
+                      {walletBalance?.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mb-10 lg:mb-14">
+              <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-3xl shadow-lg p-6 lg:p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500 rounded-full opacity-20 -mr-20 -mt-20"></div>
+
+                <div className="relative z-10 text-center py-8">
+                  <FaCreditCard className="w-16 h-16 text-white/60 mx-auto mb-4" />
+                  <h3 className="font-bold text-white mb-2 text-lg">
+                    No Virtual Account Yet
+                  </h3>
+                  <p className="text-blue-100 text-sm mb-6 max-w-sm mx-auto">
+                    Create a virtual account to easily receive payments and
+                    manage your funds
+                  </p>
+                  <button
+                    onClick={() => setShowCreateAccount(true)}
+                    className="bg-white text-blue-600 px-6 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-50 transition inline-flex items-center gap-2"
+                  >
+                    <FaPlus className="w-4 h-4" />
+                    Create Account
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Stats Cards - Total Fund and Total Spent
         <div className="grid grid-cols-2 gap-4 mb-10 lg:mb-14">
@@ -337,7 +489,6 @@ const ServicesLayout = () => {
                             </h3>
                           </div>
                         </div>
-                       
                       </div>
                     </Link>
                   ))}
@@ -553,6 +704,57 @@ const ServicesLayout = () => {
           }
         `}</style>
       </div>
+      {/* Create Virtual Account Modal */}
+      {showCreateAccount && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl">
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Create Virtual Account
+            </h3>
+            <p className="text-gray-600 text-sm mb-6">
+              Enter your NIN to create a virtual account and start receiving
+              payments.
+            </p>
+
+            <form onSubmit={handleCreateAccount} className="space-y-4">
+              <div className="flex flex-col gap-2">
+                <label className="text-gray-700 font-medium text-sm">
+                  National Identification Number (NIN)
+                </label>
+                <input
+                  type="text"
+                  value={nin}
+                  onChange={(e) => setNin(e.target.value)}
+                  placeholder="Enter your 11-digit NIN"
+                  maxLength="11"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={loading || !nin.trim()}
+                  className="flex-1 bg-blue-600 text-white font-semibold py-2.5 rounded-lg text-sm hover:bg-blue-700 transition disabled:bg-blue-300 disabled:cursor-not-allowed"
+                >
+                  {loading ? "Creating..." : "Create Account"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateAccount(false);
+                    setNin("");
+                  }}
+                  className="flex-1 bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-lg text-sm hover:bg-gray-300 transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}{" "}
     </>
   );
 };

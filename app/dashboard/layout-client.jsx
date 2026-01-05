@@ -11,6 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/dashboard/Sidebar";
 import DateTime from "@/components/DateTime";
+import { FaLock, FaTimes } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -24,6 +25,8 @@ const DashboardLayout = ({ children }) => {
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [nin, setNin] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPinReminder, setShowPinReminder] = useState(false);
+  const [walletPin, setWalletPin] = useState(null);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -35,6 +38,45 @@ const DashboardLayout = ({ children }) => {
     }
   }, [router]);
 
+  // Check for wallet PIN and set up reminder
+  useEffect(() => {
+    const checkWalletPin = async () => {
+      if (!userData) return;
+      const userId = userData?.id || userData?._id;
+      if (!userId) return;
+
+      try {
+        const response = await axios.get(
+          apiUrl(
+            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
+          )
+        );
+        const pin = response.data?.wallet?.pi;
+        setWalletPin(pin);
+
+        // Show reminder if PIN doesn't exist
+        if (!pin) {
+          setShowPinReminder(true);
+        }
+      } catch (error) {
+        console.error("Error checking wallet PIN:", error);
+      }
+    };
+
+    checkWalletPin();
+  }, [userData]);
+
+  // Set up 5-minute interval for PIN reminder
+  useEffect(() => {
+    if (!walletPin || !showPinReminder) return;
+
+    const intervalId = setInterval(() => {
+      setShowPinReminder(true);
+    }, 5 * 60); // 5 minutes
+
+    return () => clearInterval(intervalId);
+  }, [walletPin]);
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     router.push("/");
@@ -43,6 +85,49 @@ const DashboardLayout = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-100">
       <ToastContainer />
+
+      {/* PIN Reminder Modal */}
+      {showPinReminder && !walletPin && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-end p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-slide-in-right">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <FaLock className="w-5 h-5" />
+                <h3 className="text-lg font-bold">Secure Your Account</h3>
+              </div>
+              <button
+                onClick={() => setShowPinReminder(false)}
+                className="text-white hover:bg-white/20 p-1 rounded-lg transition"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="px-6 py-6">
+              <p className="text-gray-700 mb-4">
+                Protect your wallet with a secure PIN. This adds an extra layer
+                of security to all your transactions.
+              </p>
+              <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded mb-6">
+                <p className="text-sm text-orange-800">
+                  <strong>Important:</strong> Setting a PIN is recommended for
+                  your account security.
+                </p>
+              </div>
+
+              {/* Button */}
+              <Link
+                href="/dashboard/set-pin"
+                className="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold py-3 rounded-lg text-center hover:shadow-lg transition-shadow"
+              >
+                Create PIN Now
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isSidebarOpen && (
         <div
@@ -87,7 +172,7 @@ const DashboardLayout = ({ children }) => {
               </svg>
             </button>
             <Link href={"/"} className="justify-self-center">
-              <Image className="w-[3rem]"  src={Logo} alt="logo" />
+              <Image className="w-[3rem]" src={Logo} alt="logo" />
             </Link>
             <div className="scale-75 origin-right justify-self-end">
               <DateTime />
@@ -195,6 +280,22 @@ const DashboardLayout = ({ children }) => {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        .animate-slide-in-right {
+          animation: slideInRight 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };

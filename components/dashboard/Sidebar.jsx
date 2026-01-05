@@ -274,13 +274,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
 
             {/* Change Pin */}
             <Link
-              href="/dashboard/change-pin"
+              href="/dashboard/set-pin"
               className={`flex items-center space-x-2 px-4 py-2.5 rounded-lg hover:bg-gray-700 transition-colors ${
-                pathname === "/dashboard/change-pin" ? "bg-gray-700" : ""
+                pathname === "/dashboard/set-pin" ? "bg-gray-700" : ""
               }`}
             >
               <FaKey className="w-5 h-5" />
-              <span>Change Pin</span>
+              <span>Set Pin</span>
             </Link>
           </nav>
         </div>

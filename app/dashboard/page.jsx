@@ -146,12 +146,14 @@ const ServicesLayout = () => {
         setLoading(true);
         const response = await axios.get(
           apiUrl(
-            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
-          )
+            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId,
+          ),
         );
         console.log("Wallet Balance Response:", response.data);
         setWalletBalance(response.data?.wallet?.balance || 0);
-        setAccountDetails(response.data?.account || null);
+        setAccountDetails(
+          response.data?.account || response.data?.wallet?.balance,
+        );
       } catch (error) {
         console.error("Error fetching wallet balance:", error);
         setWalletBalance(0);
@@ -174,7 +176,7 @@ const ServicesLayout = () => {
       try {
         setTransactionsLoading(true);
         const response = await axios.get(
-          apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.ALL_HISTORY + userId)
+          apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.ALL_HISTORY + userId),
         );
         setgetCount(response.data?.count);
         const allTransactions =
@@ -250,7 +252,7 @@ const ServicesLayout = () => {
     try {
       const response = await axios.post(
         apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.CREATE + userId),
-        payload
+        payload,
       );
       console.log("Account created:", response.data);
       toast.success("Account created successfully!");
@@ -638,12 +640,12 @@ const ServicesLayout = () => {
                             <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-bold text-slate-900">
                               ₦
                               {parseFloat(
-                                transaction.amount || 0
+                                transaction.amount || 0,
                               ).toLocaleString()}
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-right text-xs text-slate-500">
                               {new Date(
-                                transaction.createdAt
+                                transaction.createdAt,
                               ).toLocaleDateString("en-GB", {
                                 day: "2-digit",
                                 month: "short",

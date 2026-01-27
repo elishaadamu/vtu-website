@@ -1,6 +1,8 @@
 export const API_CONFIG = {
   BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000",
-  BASE_URL_DATA: process.env.NEXT_PUBLIC_API_BASE_URL_DATA || "https://client.peyflex.com.ng/api/data",
+  BASE_URL_DATA:
+    process.env.NEXT_PUBLIC_API_BASE_URL_DATA ||
+    "https://client.peyflex.com.ng/api/data",
   ENDPOINTS: {
     AUTH: {
       SIGNUP: "/auth/register",
@@ -50,8 +52,8 @@ export const API_CONFIG = {
       PRICES: "/transactions/prices",
     },
     DATA: {
-      GET_ALL: "/data/networks/",
-      GET_BY_NETWORK: "/data/plans/?network", // append /{network}
+      GET_ALL: "/networks/",
+      GET_BY_NETWORK: "/plans/?network", // append /{network}
       CREATE: "/vtu/data",
       HISTORY: "/transactions/history/", // append userId
     },
@@ -60,11 +62,11 @@ export const API_CONFIG = {
       GET_BY_NETWORK: "/airtime-plan/network", // append /{network}
       CREATE: "/vtu/airtime",
       HISTORY: "/transactions/history/", // append userId
-    },  
+    },
   },
-
 };
 
 export const apiUrl = (endpoint) => `${API_CONFIG.BASE_URL}${endpoint}`;
 
-export const apiUrlData = (endpoint) => `${API_CONFIG.BASE_URL_DATA}${endpoint}`;
+export const apiUrlData = (endpoint) =>
+  `${API_CONFIG.BASE_URL_DATA}${endpoint}`;

@@ -15,7 +15,6 @@ import {
 } from "react-icons/fa";
 import { MdSignalCellularAlt } from "react-icons/md";
 
-
 const DataPage = () => {
   const { userData } = useAppContext();
   const [walletBalance, setWalletBalance] = useState(0);
@@ -65,8 +64,8 @@ const DataPage = () => {
         setWalletLoading(true);
         const response = await axios.get(
           apiUrl(
-            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
-          )
+            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId,
+          ),
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
       } catch (error) {
@@ -85,10 +84,9 @@ const DataPage = () => {
       setNetworksLoading(true);
       try {
         const response = await axios.get(
-          apiUrlData(API_CONFIG.ENDPOINTS.DATA.GET_ALL)
+          apiUrlData(API_CONFIG.ENDPOINTS.DATA.GET_ALL),
         );
-       
-        
+
         if (response.data.networks && Array.isArray(response.data.networks)) {
           setNetworks(response.data.networks);
         }
@@ -113,13 +111,16 @@ const DataPage = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          apiUrlData(API_CONFIG.ENDPOINTS.DATA.GET_BY_NETWORK + "=" + selectedNetwork)
+          apiUrlData(
+            API_CONFIG.ENDPOINTS.DATA.GET_BY_NETWORK + "=" + selectedNetwork,
+          ),
         );
-      
-        
+
         // API returns array of plans or { plans: [...] }
-        const plansData = Array.isArray(response.data) ? response.data : response.data.plans;
-        
+        const plansData = Array.isArray(response.data)
+          ? response.data
+          : response.data.plans;
+
         if (plansData && Array.isArray(plansData)) {
           setPlans(plansData);
         } else {
@@ -144,7 +145,7 @@ const DataPage = () => {
 
   const handlePurchase = async (e) => {
     e.preventDefault();
-    
+
     const userId = userData?.id || userData?._id;
     if (!userId) {
       message.error("User not found. Please log in again.");
@@ -163,7 +164,7 @@ const DataPage = () => {
       plan_code: selectedPlanId,
       userId,
       amount: selectedPlan.amount,
-      pin: pin.join("")
+      pin: pin.join(""),
     };
     console.log(payload);
 
@@ -171,28 +172,31 @@ const DataPage = () => {
       setLoading(true);
       const response = await axios.post(
         apiUrl(API_CONFIG.ENDPOINTS.DATA.CREATE),
-        payload
+        payload,
       );
-      
+
       message.success("Data subscription successful!");
-      
+
       // Reset form
       setSelectedNetwork("");
       setPhoneNumber("");
       setSelectedPlanId("");
       setPin(["", "", "", ""]);
       setPlans([]);
-      
+
       // Refresh wallet balance
       const balanceResponse = await axios.get(
         apiUrl(
-          API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId
-        )
+          API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId,
+        ),
       );
       setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
     } catch (error) {
       console.error("Error purchasing data:", error);
-      message.error(error.response?.data?.message || "Failed to purchase data. Please try again.");
+      message.error(
+        error.response?.data?.message ||
+          "Failed to purchase data. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -249,7 +253,10 @@ const DataPage = () => {
             {networksLoading ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-12 bg-slate-200 rounded-lg animate-pulse"></div>
+                  <div
+                    key={i}
+                    className="h-12 bg-slate-200 rounded-lg animate-pulse"
+                  ></div>
                 ))}
               </div>
             ) : (
@@ -314,11 +321,14 @@ const DataPage = () => {
                     {loading
                       ? "Loading plans..."
                       : filteredPlans.length > 0
-                      ? "Choose a data plan"
-                      : "No plans available for this network"}
+                        ? "Choose a data plan"
+                        : "No plans available for this network"}
                   </option>
                   {filteredPlans.map((plan, index) => (
-                    <option key={`${plan.plan_code}-${index}`} value={plan.plan_code}>
+                    <option
+                      key={`${plan.plan_code}-${index}`}
+                      value={plan.plan_code}
+                    >
                       {plan.label} - ₦{plan.amount}
                     </option>
                   ))}

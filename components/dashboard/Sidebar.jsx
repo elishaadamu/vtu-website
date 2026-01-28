@@ -234,6 +234,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
                       icon: FaDatabase,
                     },
                     {
+                      href: "/dashboard/history/funding",
+                      label: "Funding History",
+                      icon: FaMoneyBillWave,
+                    },
+                    {
                       href: "/dashboard/history/electric",
                       label: "Electric bill History",
                       icon: FaBolt,

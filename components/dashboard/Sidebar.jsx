@@ -204,6 +204,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
                 <div className="pl-6 mt-1 space-y-1">
                   {[
                     {
+                      href: "/dashboard/history/all-orders",
+                      label: "All Orders",
+                      icon: FaHistory,
+                    },
+                    {
                       href: "/dashboard/history/nin",
                       label: "NIN History",
                       icon: FaIdCard,

@@ -38,6 +38,7 @@ const ServicesLayout = () => {
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [nin, setNin] = useState("");
   const [accountDetails, setAccountDetails] = useState(null);
+  const [fundingsCount, setFundingsCount] = useState(0);
 
   const services = [
     {
@@ -113,17 +114,17 @@ const ServicesLayout = () => {
     //   color: "purple",
     // },
     {
-      name: "Transactions",
+      name: "All Orders",
       icon: <FaClipboardList className="w-5 h-5" />,
-      path: "",
+      path: "/dashboard/history/all-orders",
       count: getCount,
       color: "yellow",
     },
     {
       name: "Fundings",
       icon: <FaCreditCard className="w-5 h-5" />,
-      path: "/payments",
-      count: 8,
+      path: "/dashboard/history/funding",
+      count: fundingsCount,
       color: "blue",
     },
     {
@@ -178,9 +179,13 @@ const ServicesLayout = () => {
         const response = await axios.get(
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.ALL_HISTORY + userId),
         );
-        setgetCount(response.data?.count);
         const allTransactions =
           response.data?.transactions || response.data?.data || [];
+        setgetCount(response.data?.count || allTransactions.length);
+
+        const credits = allTransactions.filter((t) => t.type === "credit");
+        setFundingsCount(credits.length);
+
         console.log("All Transactions:", response.data);
         // Process transactions to extract network and phone from description
         const processedTransactions = allTransactions.map((transaction) => {
@@ -519,7 +524,7 @@ const ServicesLayout = () => {
                     <Link
                       key={index}
                       href={item.path}
-                      className="group flex items-center justify-between  rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
+                      className="group p-2 flex items-center justify-between  rounded-xl hover:bg-slate-50 transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
                     >
                       <div className="flex items-center gap-4">
                         <div

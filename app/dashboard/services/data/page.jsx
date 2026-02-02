@@ -2,6 +2,10 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import axios from "axios";
 import { message } from "antd";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 import { useAppContext } from "@/context/AppContext";
 import { apiUrl, API_CONFIG, apiUrlData } from "@/configs/api";
 import {
@@ -175,7 +179,41 @@ const DataPage = () => {
         payload,
       );
 
-      message.success("Data subscription successful!");
+      const transactionData = response.data.data;
+      
+      MySwal.fire({
+        icon: "success",
+        title: "Transaction Successful",
+        html: (
+          <div className="text-left">
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Status:</span>
+              <span className="font-bold text-green-600">{transactionData.status}</span>
+            </div>
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Network:</span>
+              <span className="font-bold">{transactionData.network}</span>
+            </div>
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Mobile Number:</span>
+              <span className="font-bold">{transactionData.mobile_number}</span>
+            </div>
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Plan:</span>
+              <span className="font-bold">{transactionData.plan_name || transactionData.data_plan || "Data Plan"}</span>
+            </div>
+             <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Amount:</span>
+              <span className="font-bold">₦{transactionData.amount}</span>
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-gray-600">{transactionData.message}</p>
+            </div>
+          </div>
+        ),
+        confirmButtonColor: "#a855f7",
+        confirmButtonText: "Close",
+      });
 
       // Reset form
       setSelectedNetwork("");

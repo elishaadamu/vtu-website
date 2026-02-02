@@ -2,6 +2,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { message } from "antd";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
 import { useAppContext } from "@/context/AppContext";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import {
@@ -75,7 +79,7 @@ const AirtimePage = () => {
 
   const handlePurchase = async (e) => {
     e.preventDefault();
-    
+
     const userId = userData?.id || userData?._id;
     if (!userId) {
       message.error("User not found. Please log in again.");
@@ -95,15 +99,43 @@ const AirtimePage = () => {
         apiUrl(API_CONFIG.ENDPOINTS.AIRTIME.CREATE),
         payload
       );
-      
-      message.success("Airtime purchase successful!");
-      
+      const transactionData = response.data.data;
+      MySwal.fire({
+        icon: "success",
+        title: "Transaction Successful",
+        html: (
+          <div className="text-left">
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Status:</span>
+              <span className="font-bold text-green-600">{transactionData.status}</span>
+            </div>
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Network:</span>
+              <span className="font-bold">{transactionData.network}</span>
+            </div>
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Mobile Number:</span>
+              <span className="font-bold">{transactionData.mobile_number}</span>
+            </div>
+            <div className="flex justify-between items-center border-b pb-2 mb-2">
+              <span className="font-semibold text-gray-600">Amount:</span>
+              <span className="font-bold">₦{transactionData.amount}</span>
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-gray-600">{transactionData.message}</p>
+            </div>
+          </div>
+        ),
+        confirmButtonColor: "#a855f7",
+        confirmButtonText: "Close",
+      });
+
       // Reset form
       setNetwork("");
       setPhoneNumber("");
       setAmount("");
       setPin(["", "", "", ""]);
-      
+
       // Refresh wallet balance
       const balanceResponse = await axios.get(
         apiUrl(
@@ -171,11 +203,10 @@ const AirtimePage = () => {
                   key={net.id}
                   type="button"
                   onClick={() => setNetwork(net.id)}
-                  className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all duration-200 ${
-                    network === net.id
-                      ? "border-purple-500 bg-purple-50 shadow-md"
-                      : "border-slate-200 bg-slate-50 hover:border-purple-300"
-                  }`}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all duration-200 ${network === net.id
+                    ? "border-purple-500 bg-purple-50 shadow-md"
+                    : "border-slate-200 bg-slate-50 hover:border-purple-300"
+                    }`}
                 >
                   <FaWifi className="w-5 h-5 text-slate-500" />
                   <span className="font-semibold text-slate-800">

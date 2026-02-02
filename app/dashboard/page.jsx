@@ -153,7 +153,7 @@ const ServicesLayout = () => {
         console.log("Wallet Balance Response:", response.data);
         setWalletBalance(response.data?.wallet?.balance || 0);
         setAccountDetails(
-          response.data?.account || response.data?.wallet?.balance,
+          response.data?.account || response.data?.wallet?.balance || response.data?.success,
         );
       } catch (error) {
         console.error("Error fetching wallet balance:", error);

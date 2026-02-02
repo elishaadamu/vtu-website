@@ -90,6 +90,7 @@ const DataPage = () => {
         const response = await axios.get(
           apiUrlData(API_CONFIG.ENDPOINTS.DATA.GET_ALL),
         );
+       
 
         if (response.data.networks && Array.isArray(response.data.networks)) {
           setNetworks(response.data.networks);

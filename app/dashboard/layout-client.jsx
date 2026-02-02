@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { decryptData } from "../../lib/encryption";
 import Logo from "@/assets/logo/logo.png";
 import axios from "axios";
@@ -15,6 +15,7 @@ import { FaLock, FaTimes } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
+  const pathname = usePathname();
   const [openOrders, setOpenOrders] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
   const [openDelivery, setOpenDelivery] = useState(false);
@@ -87,7 +88,7 @@ const DashboardLayout = ({ children }) => {
       <ToastContainer />
 
       {/* PIN Reminder Modal */}
-      {showPinReminder && !walletPin && (
+      {showPinReminder && !walletPin && pathname !== "/dashboard/set-pin" && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-end p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-slide-in-right">
             {/* Header */}

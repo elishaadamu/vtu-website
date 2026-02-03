@@ -36,12 +36,6 @@ const page = () => {
     hasSpecialChars: false,
   });
 
-  useEffect(() => {
-    if (localStorage.getItem("user")) {
-      router.push("/");
-    }
-  }, [router]);
-
   const validatePassword = (password) => {
     const hasMinLength = password.length >= 8;
     const hasUpperCase = /[A-Z]/.test(password);

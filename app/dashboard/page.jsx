@@ -20,7 +20,6 @@ import {
   FaChevronRight,
   FaPlus,
   FaUserCircle,
-  FaUniversity,
 } from "react-icons/fa";
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
@@ -311,7 +310,7 @@ const ServicesLayout = () => {
 
           {/* Wallet Carousel Section */}
           {accountDetails ? (
-            <div className="mb-10 lg:mb-14">
+            <div className="mb-6 lg:mb-8">
               <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-3xl shadow-lg p-6 lg:p-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500 rounded-full opacity-20 -mr-20 -mt-20"></div>
 
@@ -330,46 +329,45 @@ const ServicesLayout = () => {
                   </div>
 
                   {/* Account Details Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Current Balance */}
+                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-white/20 p-3 rounded-lg">
+                          <FaWallet className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-blue-100 text-xs mb-1">
+                            Current Balance
+                          </p>
+                          <h3 className="text-lg font-bold text-white">
+                            ₦
+                            {walletBalance?.toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            })}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Account Name & Number */}
                     <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
                       <div className="flex items-center gap-3">
                         <div className="bg-white/20 p-3 rounded-lg">
                           <FaUserCircle className="w-5 h-5 text-white" />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 overflow-hidden">
                           <p className="text-blue-100 text-xs mb-1">
-                            Account Name
+                            Account Details
                           </p>
-                          <p className="text-white font-semibold text-sm">
+                          <p className="text-white font-semibold text-sm truncate">
                             {accountDetails?.virtualAccountName || "N/A"}
                           </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-3 rounded-lg">
-                          <FaCreditCard className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-blue-100 text-xs mb-1">
-                            Account Number
-                          </p>
-                          <p className="text-white font-semibold text-sm">
+                          <p className="text-white/90 text-xs font-mono">
                             {accountDetails?.virtualAccountNumber || "N/A"}
                           </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-3 rounded-lg">
-                          <FaUniversity className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-blue-100 text-xs mb-1">
+                          <p className="text-blue-100 text-xs mt-2 mb-1">
                             Bank Name
                           </p>
                           <p className="text-white font-semibold text-sm">
@@ -378,20 +376,6 @@ const ServicesLayout = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Balance Section */}
-                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 mt-4">
-                    <p className="text-blue-100 text-sm mb-2">
-                      Current Balance
-                    </p>
-                    <h3 className="text-3xl font-bold text-white">
-                      ₦
-                      {walletBalance?.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                    </h3>
                   </div>
                 </div>
               </div>

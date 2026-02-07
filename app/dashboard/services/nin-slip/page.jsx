@@ -11,6 +11,8 @@ import {
 } from "react-icons/fa";
 import Image from "next/image";
 import { message, Modal } from "antd";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import RegularSlip from "@/app/dashboard/assets/regular.png";
 import StandardSlip from "@/app/dashboard/assets/standard.png";
 import PremiumSlip from "@/app/dashboard/assets/premium.png";
@@ -19,6 +21,8 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { useAppContext } from "@/context/AppContext";
+
+const MySwal = withReactContent(Swal);
 
 const NinVerificationPage = () => {
   const router = useRouter();
@@ -49,8 +53,6 @@ const NinVerificationPage = () => {
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
-      } catch (error) {
-        console.error("Error fetching wallet balance:", error);
       } finally {
         setWalletLoading(false);
       }
@@ -67,7 +69,6 @@ const NinVerificationPage = () => {
         const response = await axios.get(
           apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
         );
-        console.log("API Prices Response:", response.data);
         
         // Find NIN pricing
         const ninPricingData = Array.isArray(response.data)
@@ -90,7 +91,6 @@ const NinVerificationPage = () => {
           setAgentPrices(slipTypes);
         }
       } catch (error) {
-        console.error("Error fetching API prices:", error);
         message.error("Failed to fetch current prices");
         // Use default slipTypes on error
         setAgentPrices(slipTypes);
@@ -191,7 +191,11 @@ const NinVerificationPage = () => {
         setIsLoading(true);
         try {
           if (!userData) {
-            message.error("User session not found. Please login again.");
+            MySwal.fire({
+              icon: "error",
+              title: "Authentication Error",
+              text: "User session not found. Please login again.",
+            });
             setIsLoading(false);
             return;
           }
@@ -199,7 +203,11 @@ const NinVerificationPage = () => {
           const userId = userData?.id || userData?._id;
 
           if (!userId) {
-            message.error("Invalid user session.");
+            MySwal.fire({
+              icon: "error",
+              title: "Authentication Error",
+              text: "Invalid user session.",
+            });
             setIsLoading(false);
             return;
           }
@@ -218,17 +226,15 @@ const NinVerificationPage = () => {
             payload.nin = idNumber;
           }
 
-          console.log("Payload for verification:", payload);
-
           const response = await axios.post(
             apiUrl(API_CONFIG.ENDPOINTS.NIN_VERIFICATION.CREATE),
             payload
           );
-          console.log(response.data);
-          message.success(
-            response.data.message ||
-              "Verification request submitted successfully!"
-          );
+          MySwal.fire({
+            icon: "success",
+            title: "Success",
+            text: response.data.message || "Verification request submitted successfully!",
+          });
 
           // Refresh wallet balance after successful transaction
           const balanceResponse = await axios.get(
@@ -257,11 +263,11 @@ const NinVerificationPage = () => {
           setPin(["", "", "", ""]);
           setConsent(false);
         } catch (error) {
-          console.error("Verification Error:", error);
-          message.error(
-            error.response?.data?.message ||
-              "Verification failed. Please check your details and try again."
-          );
+          MySwal.fire({
+            icon: "error",
+            title: "Verification Failed",
+            text: error.response?.data?.message || "Verification failed. Please check your details and try again.",
+          });
         } finally {
           setIsLoading(false);
         }

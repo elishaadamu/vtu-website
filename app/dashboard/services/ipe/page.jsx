@@ -9,9 +9,13 @@ import {
   FaEyeSlash,
 } from "react-icons/fa";
 import { message, Modal } from "antd";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { useAppContext } from "@/context/AppContext";
+
+const MySwal = withReactContent(Swal);
 
 const IpeVerificationPage = () => {
   const { userData } = useAppContext();
@@ -41,8 +45,6 @@ const IpeVerificationPage = () => {
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
-      } catch (error) {
-        console.error("Error fetching wallet balance:", error);
       } finally {
         setWalletLoading(false);
       }
@@ -59,7 +61,6 @@ const IpeVerificationPage = () => {
         const response = await axios.get(
           apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
         );
-        console.log("API Prices Response:", response.data);
         
         // Find IPE pricing
         const ipePricingData = Array.isArray(response.data)
@@ -73,13 +74,10 @@ const IpeVerificationPage = () => {
           // Set the agent price for IPE and update amount immediately
           setIpePrice(ipePricing.prices.agent);
           setAmount(ipePricing.prices.agent);
-          console.log("IPE Agent Price:", ipePricing.prices.agent);
         } else {
-          console.log("No IPE pricing found, using default");
           setIpePrice(0);
         }
       } catch (error) {
-        console.error("Error fetching IPE price:", error);
         setIpePrice(0);
       } finally {
         setPriceLoading(false);
@@ -105,7 +103,6 @@ const IpeVerificationPage = () => {
         setAmount(0);
       }
     } catch (error) {
-      console.error("Error setting amount:", error);
       setAmount(0);
     } finally {
       setIsLoadingAmount(false);
@@ -202,7 +199,11 @@ const IpeVerificationPage = () => {
         setIsLoading(true);
         try {
           if (!userData) {
-            message.error("User session not found. Please login again.");
+            MySwal.fire({
+              icon: "error",
+              title: "Authentication Error",
+              text: "User session not found. Please login again.",
+            });
             setIsLoading(false);
             return;
           }
@@ -210,7 +211,11 @@ const IpeVerificationPage = () => {
           const userId = userData?.id || userData?._id;
 
           if (!userId) {
-            message.error("Invalid user session.");
+            MySwal.fire({
+              icon: "error",
+              title: "Authentication Error",
+              text: "Invalid user session.",
+            });
             setIsLoading(false);
             return;
           }
@@ -222,17 +227,15 @@ const IpeVerificationPage = () => {
             pin: pin.join(""),
           };
 
-          console.log("IPE Verification Payload:", payload);
-
           const response = await axios.post(
             apiUrl(API_CONFIG.ENDPOINTS.IPE_VERIFICATION?.CREATE),
             payload
           );
-          console.log(response.data);
-          message.success(
-            response.data.message ||
-              "IPE verification request submitted successfully!"
-          );
+          MySwal.fire({
+            icon: "success",
+            title: "Success",
+            text: response.data.message || "IPE verification request submitted successfully!",
+          });
 
           // Refresh wallet balance after successful transaction
           const balanceResponse = await axios.get(
@@ -246,11 +249,11 @@ const IpeVerificationPage = () => {
           setConsent(false);
           setAmount(0);
         } catch (error) {
-          console.error("IPE Verification Error:", error);
-          message.error(
-            error.response?.data?.message ||
-              "Verification failed. Please check your details and try again."
-          );
+          MySwal.fire({
+            icon: "error",
+            title: "Verification Failed",
+            text: error.response?.data?.message || "Verification failed. Please check your details and try again.",
+          });
         } finally {
           setIsLoading(false);
         }

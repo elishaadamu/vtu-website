@@ -11,6 +11,8 @@ import {
 } from "react-icons/fa";
 import Image from "next/image";
 import { message, Modal } from "antd";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import BasicSlip from "@/app/dashboard/assets/basic-bvn.jpeg";
 import AdvancedSlip from "@/app/dashboard/assets/advanced-bvn.jpg";
 
@@ -18,6 +20,8 @@ import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { useAppContext } from "@/context/AppContext";
 import { useRouter } from "next/navigation";
+
+const MySwal = withReactContent(Swal);
 
 const BvnVerificationPage = () => {
   const { userData, viewBvnSlip } = useAppContext();
@@ -48,8 +52,6 @@ const BvnVerificationPage = () => {
           apiUrl(API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId)
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
-      } catch (error) {
-        console.error("Error fetching wallet balance:", error);
       } finally {
         setWalletLoading(false);
       }
@@ -66,7 +68,6 @@ const BvnVerificationPage = () => {
         const response = await axios.get(
           apiUrl(API_CONFIG.ENDPOINTS.FETCH_PRICES.PRICES)
         );
-        console.log("API Prices Response:", response.data);
         
         // Find BVN pricing
         const bvnPricingData = Array.isArray(response.data)
@@ -89,7 +90,6 @@ const BvnVerificationPage = () => {
           setAgentPrices(slipTypes);
         }
       } catch (error) {
-        console.error("Error fetching API prices:", error);
         message.error("Failed to fetch current prices");
         // Use default slipTypes on error
         setAgentPrices(slipTypes);
@@ -190,7 +190,11 @@ const BvnVerificationPage = () => {
         setIsLoading(true);
         try {
           if (!userData) {
-            message.error("User session not found. Please login again.");
+            MySwal.fire({
+              icon: "error",
+              title: "Authentication Error",
+              text: "User session not found. Please login again.",
+            });
             setIsLoading(false);
             return;
           }
@@ -198,7 +202,11 @@ const BvnVerificationPage = () => {
           const userId = userData?.id || userData?._id;
 
           if (!userId) {
-            message.error("Invalid user session.");
+            MySwal.fire({
+              icon: "error",
+              title: "Authentication Error",
+              text: "Invalid user session.",
+            });
             setIsLoading(false);
             return;
           }
@@ -217,22 +225,21 @@ const BvnVerificationPage = () => {
             payload.bvn = bvnNumber;
           }
 
-          console.log("Payload for BVN verification:", payload);
-
           const response = await axios.post(
             apiUrl(API_CONFIG.ENDPOINTS.BVN_VERIFICATION.CREATE),
             payload
           );
 
-          console.log("API Response:", response.data); // Debug log
-
           // Store the verification data in context
           viewBvnSlip(response.data?.result?.data, selectedSlip);
 
-          message.success(
-            response.data.message ||
-              "BVN verification request submitted successfully!"
-          );
+          MySwal.fire({
+            icon: "success",
+            title: "Success",
+            text:
+              response.data.message ||
+              "BVN verification request submitted successfully!",
+          });
 
           // Refresh wallet balance after successful transaction
           const balanceResponse = await axios.get(
@@ -247,11 +254,13 @@ const BvnVerificationPage = () => {
             router.push("/advanced-bvn");
           }
         } catch (error) {
-          console.error("BVN Verification Error:", error);
-          message.error(
-            error.response?.data?.message ||
-              "BVN verification failed. Please check your details and try again."
-          );
+          MySwal.fire({
+            icon: "error",
+            title: "Verification Failed",
+            text:
+              error.response?.data?.message ||
+              "BVN verification failed. Please check your details and try again.",
+          });
         } finally {
           setIsLoading(false);
         }

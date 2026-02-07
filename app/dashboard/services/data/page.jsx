@@ -72,8 +72,6 @@ const DataPage = () => {
           ),
         );
         setWalletBalance(response.data?.wallet?.balance || 0);
-      } catch (error) {
-        console.error("Error fetching wallet balance:", error);
       } finally {
         setWalletLoading(false);
       }
@@ -95,8 +93,6 @@ const DataPage = () => {
         if (response.data.networks && Array.isArray(response.data.networks)) {
           setNetworks(response.data.networks);
         }
-      } catch (error) {
-        console.error("Error fetching networks:", error);
       } finally {
         setNetworksLoading(false);
       }
@@ -129,11 +125,9 @@ const DataPage = () => {
         if (plansData && Array.isArray(plansData)) {
           setPlans(plansData);
         } else {
-          console.warn("Unexpected API response format");
           setPlans([]);
         }
       } catch (error) {
-        console.error(`Error fetching ${selectedNetwork} plans:`, error);
         setPlans([]);
       } finally {
         setLoading(false);
@@ -171,7 +165,6 @@ const DataPage = () => {
       amount: selectedPlan.amount,
       pin: pin.join(""),
     };
-    console.log(payload);
 
     try {
       setLoading(true);
@@ -179,9 +172,7 @@ const DataPage = () => {
         apiUrl(API_CONFIG.ENDPOINTS.DATA.CREATE),
         payload,
       );
-
       const transactionData = response.data.data;
-      
       MySwal.fire({
         icon: "success",
         title: "Transaction Successful",
@@ -231,11 +222,11 @@ const DataPage = () => {
       );
       setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
     } catch (error) {
-      console.error("Error purchasing data:", error);
-      message.error(
-        error.response?.data?.message ||
-          "Failed to purchase data. Please try again.",
-      );
+      MySwal.fire({
+        icon: "error",
+        title: "Transaction Failed",
+        text: error.response?.data?.message || "Failed to purchase data. Please try again.",
+      });
     } finally {
       setLoading(false);
     }

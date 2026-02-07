@@ -81,11 +81,6 @@ const AirtimePage = () => {
     e.preventDefault();
 
     const userId = userData?.id || userData?._id;
-    if (!userId) {
-      message.error("User not found. Please log in again.");
-      return;
-    }
-
     const payload = {
       network,
       amount: parseFloat(amount),
@@ -144,8 +139,11 @@ const AirtimePage = () => {
       );
       setWalletBalance(balanceResponse.data?.wallet?.balance || 0);
     } catch (error) {
-      console.error("Error purchasing airtime:", error);
-      message.error(error.response?.data?.message || "Failed to purchase airtime. Please try again.");
+      MySwal.fire({
+        icon: "error",
+        title: "Transaction Failed",
+        text: error.response?.data?.message || "Failed to purchase airtime. Please try again.",
+      });
     } finally {
       setLoading(false);
     }

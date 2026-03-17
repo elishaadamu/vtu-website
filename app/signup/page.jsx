@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Logo from "@/assets/logo/logo.png";
+import Logo from "@/assets/logo/logo-no-bg.png";
 
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
@@ -136,7 +136,7 @@ const page = () => {
           <Image
             className="cursor-pointer w-[100px] md:w-[150px] mx-auto"
             src={Logo}
-            alt=""
+            alt="MISAL SUB"
           />
         </Link>
         <p className="text-center font-semibold text-xl">Create an account</p>

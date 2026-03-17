@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "@/assets/logo/logo.png";
+import Logo from "@/assets/logo/logo-no-bg.png";
 import {
   FaFacebookF,
   FaTwitter,
@@ -73,15 +73,15 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
               <Image
-                className="w-[240px] h-auto"
+                className="w-[180px] h-auto"
                 src={Logo}
-                alt="Kasuwar Zamani Logo"
+                alt="MISAL SUB Logo"
               />
             </div>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Your premier online marketplace for authentic products. We bring
-              you quality items at competitive prices with exceptional customer
-              service.
+              Your premier VTU platform for data, airtime, and bill payments. We
+              bring you quality services at competitive prices with exceptional
+              customer support.
             </p>
 
             {/* Social Links */}
@@ -223,7 +223,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-400 text-sm text-center md:text-left">
-              © {currentYear} Kasuwar Zamani. All rights reserved.
+              © {currentYear} MISAL SUB. All rights reserved.
             </p>
 
             <div className="flex items-center gap-6 text-sm text-gray-400">

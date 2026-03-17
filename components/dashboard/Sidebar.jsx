@@ -19,6 +19,8 @@ import {
   FaCogs,
   FaSearch,
 } from "react-icons/fa";
+import Image from "next/image";
+import Logo from "@/assets/logo/logo-no-bg-1.png";
 import { decryptData } from "@/lib/encryption";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
@@ -62,14 +64,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 rounded-xl shadow-lg">
-              <FaHome className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-white">
-                Abba - <span className="text-blue-500">Jagar</span>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <Image src={Logo} alt="Logo" className="w-12 h-auto" />
+              <h2 className="text-xl font-bold text-white italic">
+                <span className="text-blue-500">MISAL</span>
+                <span className="text-orange-500">SUB</span>
               </h2>
-            </div>
+            </Link>
           </div>
           <button
             className="p-2 rounded-md hover:bg-gray-700 md:hidden"

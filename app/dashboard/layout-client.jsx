@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { decryptData } from "../../lib/encryption";
-import Logo from "@/assets/logo/logo.png";
+import Logo from "@/assets/logo/logo-no-bg.png";
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { ToastContainer, toast } from "react-toastify";
@@ -173,7 +173,7 @@ const DashboardLayout = ({ children }) => {
               </svg>
             </button>
             <Link href={"/"} className="justify-self-center">
-              <Image className="w-[3rem]" src={Logo} alt="logo" />
+              <Image className="w-[3rem]" src={Logo} alt="MISAL SUB" />
             </Link>
             <div className="scale-75 origin-right justify-self-end">
               <DateTime />

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Logo from "@/assets/logo/logo.png";
+import Logo from "@/assets/logo/logo-no-bg.png";
 import Link from "next/link";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
@@ -13,10 +13,10 @@ const Navbar = () => {
     <nav className=" border-b border-gray-300 text-gray-700 relative bg-white shadow-md z-10">
       <div className="max-w-[1440px] mx-auto flex items-center justify-between px-2 md:px-4 lg:px-4 py-3">
         <Image
-          className="cursor-pointer w-[200px] md:w-[250px]"
+          className="cursor-pointer w-[140px] md:w-[180px]"
           onClick={() => router.push("/")}
           src={Logo}
-          alt="logo"
+          alt="MISAL SUB"
         />
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-x-4 md:gap-x-6">

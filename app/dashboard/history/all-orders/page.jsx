@@ -65,19 +65,46 @@ export default function AllOrdersHistory() {
       const allTransactions =
         response.data?.transactions || response.data?.data || [];
 
-      const processedTransactions = allTransactions.map((transaction) => ({
-        ...transaction,
-        reference:
-          transaction.transactionReference ||
-          transaction.reference ||
-          transaction.transactionId,
-        method:
-          transaction.method ||
-          transaction.paymentMethod ||
-          transaction.TransactionType?.replace(/_/g, " ").toUpperCase() ||
-          "Wallet",
-        phone: transaction.phone || transaction.phoneNumber || "N/A",
-      }));
+      const processedTransactions = allTransactions.map((transaction) => {
+        let network = transaction.network;
+        let phone = transaction.phone || transaction.phoneNumber;
+
+        // Extract network from description if not present
+        if (!network && transaction.description) {
+          const networkMatch = transaction.description.match(/:\s*([^-]+)\s*-/);
+          if (networkMatch) {
+            network = networkMatch[1].trim();
+          }
+        }
+
+        // Extract phone from description if not present
+        if (!phone && transaction.description) {
+          const phoneMatch = transaction.description.match(/(?:for|-)\s*(\d{11})/);
+          if (phoneMatch) {
+            phone = phoneMatch[1];
+          }
+        }
+
+        return {
+          ...transaction,
+          reference:
+            transaction.transactionReference ||
+            transaction.reference ||
+            transaction.transactionId ||
+            transaction._id ||
+            "N/A",
+          method:
+            transaction.method ||
+            transaction.paymentMethod ||
+            transaction.TransactionType?.replace(/_/g, " ").toUpperCase() ||
+            "Wallet",
+          phone: phone || "N/A",
+          network: network || "N/A",
+          plan: transaction.plan || transaction.description || "N/A",
+          oldBalance: transaction.oldBalance !== undefined ? transaction.oldBalance : (transaction.balanceBefore !== undefined ? transaction.balanceBefore : (transaction.previousBalance !== undefined ? transaction.previousBalance : "N/A")),
+          newBalance: transaction.newBalance !== undefined ? transaction.newBalance : (transaction.balanceAfter !== undefined ? transaction.balanceAfter : (transaction.currentBalance !== undefined ? transaction.currentBalance : "N/A")),
+        };
+      });
 
       setApiData(processedTransactions);
 
@@ -369,31 +396,46 @@ export default function AllOrdersHistory() {
                       <TableHeader
                         label="Date"
                         sortKey="createdAt"
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                       />
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                        Description & Type
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Transaction ID
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Phone Number
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Network
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Plan
                       </th>
                       <TableHeader
                         label="Amount"
                         sortKey="amount"
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                        className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                       />
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Prev Balance
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        New Balance
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-gray-100 bg-white">
                     {paginatedData.map((transaction, index) => (
                       <tr
                         key={transaction._id || index}
                         className="hover:bg-gray-50/50 transition-colors duration-150"
                       >
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-3 whitespace-nowrap">
                           <div className="text-sm text-gray-900">
                             {format(
                               new Date(
@@ -402,7 +444,7 @@ export default function AllOrdersHistory() {
                               "dd/MM/yyyy",
                             )}
                           </div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 mt-0.5">
                             {format(
                               new Date(
                                 transaction.createdAt || transaction.date,
@@ -411,27 +453,19 @@ export default function AllOrdersHistory() {
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-4 max-w-md">
-                          <div className="text-sm font-medium text-gray-900 truncate">
-                            {transaction.description || "No description"}
-                          </div>
-                          <div className="mt-1 flex gap-2">
-                            <Tag
-                              color={
-                                transaction.type === "credit"
-                                  ? "success"
-                                  : "error"
-                              }
-                              className="text-[10px] py-0 px-1 leading-4 h-4 uppercase"
-                            >
-                              {transaction.type}
-                            </Tag>
-                            <span className="text-[10px] text-gray-400 font-mono">
-                              {transaction.reference}
-                            </span>
-                          </div>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm font-mono text-gray-600">
+                          {transaction.reference}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                          {transaction.phone}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900 capitalize">
+                          {transaction.network}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-900 max-w-xs truncate">
+                          {transaction.plan}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
                           <span
                             className={`text-sm font-bold ${transaction.type === "credit" ? "text-emerald-600" : "text-rose-600"}`}
                           >
@@ -441,7 +475,13 @@ export default function AllOrdersHistory() {
                             ).toLocaleString()}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                          {transaction.oldBalance !== "N/A" ? `₦${parseFloat(transaction.oldBalance).toLocaleString()}` : "N/A"}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                          {transaction.newBalance !== "N/A" ? `₦${parseFloat(transaction.newBalance).toLocaleString()}` : "N/A"}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
                           <Badge
                             status={getStatusColor(transaction.status)}
                             text={
@@ -451,7 +491,7 @@ export default function AllOrdersHistory() {
                             }
                           />
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <td className="px-4 py-3 whitespace-nowrap text-center">
                           <Tooltip title="View Details">
                             <button
                               onClick={() => showModal(transaction)}
@@ -564,21 +604,39 @@ export default function AllOrdersHistory() {
 
               <div className="space-y-3">
                 <div className="flex justify-between border-b pb-2">
-                  <span className="text-gray-500 text-sm">Description</span>
-                  <span className="text-gray-900 text-sm font-medium text-right ml-4">
-                    {selectedTransaction.description}
-                  </span>
-                </div>
-                <div className="flex justify-between border-b pb-2">
-                  <span className="text-gray-500 text-sm">Type</span>
-                  <span className="text-gray-900 text-sm font-medium uppercase font-mono">
-                    {selectedTransaction.TransactionType?.replace(/-/g, " ")}
-                  </span>
-                </div>
-                <div className="flex justify-between border-b pb-2">
-                  <span className="text-gray-500 text-sm">Reference</span>
+                  <span className="text-gray-500 text-sm">Transaction ID</span>
                   <span className="text-gray-900 text-sm font-mono">
                     {selectedTransaction.reference}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-gray-500 text-sm">Phone Number</span>
+                  <span className="text-gray-900 text-sm">
+                    {selectedTransaction.phone}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-gray-500 text-sm">Network</span>
+                  <span className="text-gray-900 text-sm capitalize">
+                    {selectedTransaction.network}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-gray-500 text-sm">Plan</span>
+                  <span className="text-gray-900 text-sm text-right ml-4 max-w-[70%] truncate">
+                    {selectedTransaction.plan}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-gray-500 text-sm">Previous Balance</span>
+                  <span className="text-gray-900 text-sm">
+                    {selectedTransaction.oldBalance !== "N/A" ? `₦${parseFloat(selectedTransaction.oldBalance).toLocaleString()}` : "N/A"}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-gray-500 text-sm">New Balance</span>
+                  <span className="text-gray-900 text-sm">
+                    {selectedTransaction.newBalance !== "N/A" ? `₦${parseFloat(selectedTransaction.newBalance).toLocaleString()}` : "N/A"}
                   </span>
                 </div>
                 <div className="flex justify-between border-b pb-2">
@@ -593,14 +651,6 @@ export default function AllOrdersHistory() {
                     )}
                   </span>
                 </div>
-                {selectedTransaction.phone && (
-                  <div className="flex justify-between border-b pb-2">
-                    <span className="text-gray-500 text-sm">Phone/Account</span>
-                    <span className="text-gray-900 text-sm">
-                      {selectedTransaction.phone}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
           )}

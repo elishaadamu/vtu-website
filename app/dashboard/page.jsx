@@ -311,72 +311,33 @@ const ServicesLayout = () => {
           {/* Wallet Carousel Section */}
           {accountDetails ? (
             <div className="mb-6 lg:mb-8">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-3xl shadow-lg p-6 lg:p-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500 rounded-full opacity-20 -mr-20 -mt-20"></div>
+              <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-2xl shadow-lg p-5 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full opacity-20 -mr-16 -mt-16"></div>
 
-                <div className="relative z-10">
-                  {/* Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
-                    <div className="mb-3 sm:mb-0">
-                      <h2 className="text-xl lg:text-2xl font-bold flex items-center gap-3 mb-2">
-                        <FaWallet className="w-6 h-6" />
-                        Your Virtual Account
-                      </h2>
-                      <p className="text-blue-100 text-sm">
-                        Easily receive payments and manage your funds
-                      </p>
-                    </div>
+                <div className="relative z-10 flex items-center gap-4">
+                  <div className="bg-white/20 p-3 rounded-xl hidden sm:block">
+                    <FaWallet className="w-6 h-6 text-white" />
                   </div>
-
-                  {/* Account Details Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {/* Current Balance */}
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-3 rounded-lg">
-                          <FaWallet className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-blue-100 text-xs mb-1">
-                            Current Balance
-                          </p>
-                          <h3 className="text-lg font-bold text-white">
-                            ₦
-                            {walletBalance?.toLocaleString(undefined, {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Account Name & Number */}
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-3 rounded-lg">
-                          <FaUserCircle className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="flex-1 overflow-hidden">
-                          <p className="text-blue-100 text-xs mb-1">
-                            Account Details
-                          </p>
-                          <p className="text-white font-semibold text-sm truncate">
-                            {accountDetails?.virtualAccountName || "N/A"}
-                          </p>
-                          <p className="text-white/90 text-xs font-mono">
-                            {accountDetails?.virtualAccountNumber || "N/A"}
-                          </p>
-                          <p className="text-blue-100 text-xs mt-2 mb-1">
-                            Bank Name
-                          </p>
-                          <p className="text-white font-semibold text-sm">
-                            {accountDetails?.virtualBanktName || "N/A"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                  <div>
+                    <p className="text-blue-100 text-sm mb-1">Current Balance</p>
+                    <h3 className="text-2xl lg:text-3xl font-bold text-white">
+                      ₦
+                      {walletBalance?.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </h3>
                   </div>
+                </div>
+                
+                <div className="relative z-10 bg-white/10 backdrop-blur-sm rounded-xl p-3 md:text-right w-full md:w-auto flex flex-col md:items-end">
+                  <p className="text-blue-100 text-xs mb-1">Virtual Account</p>
+                  <p className="text-white font-semibold text-lg font-mono tracking-wider">
+                    {accountDetails?.virtualAccountNumber || "N/A"}
+                  </p>
+                  <p className="text-white/90 text-sm mt-1">
+                    {accountDetails?.virtualBanktName || "N/A"}
+                  </p>
                 </div>
               </div>
             </div>

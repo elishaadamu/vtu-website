@@ -100,8 +100,10 @@ export default function DataHistory() {
           ...transaction,
           network: network || "N/A",
           phoneNumber: phone || transaction.phoneNumber || "N/A",
-          reference: transaction.transactionReference || transaction.reference || transaction.transactionId,
-          plan: transaction.plan || transaction.description || "Data Plan"
+          reference: transaction.transactionReference || transaction.reference || transaction.transactionId || "N/A",
+          plan: transaction.plan || transaction.description || "Data Plan",
+          oldBalance: transaction.oldBalance !== undefined ? transaction.oldBalance : (transaction.balanceBefore !== undefined ? transaction.balanceBefore : (transaction.previousBalance !== undefined ? transaction.previousBalance : "N/A")),
+          newBalance: transaction.newBalance !== undefined ? transaction.newBalance : (transaction.balanceAfter !== undefined ? transaction.balanceAfter : (transaction.currentBalance !== undefined ? transaction.currentBalance : "N/A")),
         };
       });
       
@@ -657,6 +659,18 @@ export default function DataHistory() {
                     <p className="text-sm text-gray-600">Reference</p>
                     <p className="text-gray-900 font-mono text-xs">
                       {selectedTransaction.reference || selectedTransaction.transactionId || "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Previous Balance</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedTransaction.oldBalance !== "N/A" ? `₦${parseFloat(selectedTransaction.oldBalance).toLocaleString()}` : "N/A"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">New Balance</p>
+                    <p className="text-gray-900 font-medium">
+                      {selectedTransaction.newBalance !== "N/A" ? `₦${parseFloat(selectedTransaction.newBalance).toLocaleString()}` : "N/A"}
                     </p>
                   </div>
                   <div>

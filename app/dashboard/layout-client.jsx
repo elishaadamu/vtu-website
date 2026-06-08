@@ -11,7 +11,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/dashboard/Sidebar";
 import DateTime from "@/components/DateTime";
-import { FaLock, FaTimes } from "react-icons/fa";
+import { FaLock, FaTimes, FaHome, FaShoppingCart, FaExchangeAlt, FaCogs, FaWifi, FaPhone, FaLightbulb, FaTv } from "react-icons/fa";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -26,8 +26,8 @@ const DashboardLayout = ({ children }) => {
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [nin, setNin] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPinReminder, setShowPinReminder] = useState(false);
-  const [walletPin, setWalletPin] = useState(null);
+  const [isQuickMenuOpen, setIsQuickMenuOpen] = useState(false);
+
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -39,44 +39,7 @@ const DashboardLayout = ({ children }) => {
     }
   }, [router]);
 
-  // Check for wallet PIN and set up reminder
-  useEffect(() => {
-    const checkWalletPin = async () => {
-      if (!userData) return;
-      const userId = userData?.id || userData?._id;
-      if (!userId) return;
 
-      try {
-        const response = await axios.get(
-          apiUrl(
-            API_CONFIG.ENDPOINTS.ACCOUNT.walletBalance + "balance/" + userId,
-          ),
-        );
-        const pin = response.data?.wallet?.pin;
-        setWalletPin(pin);
-
-        // Show reminder if PIN doesn't exist
-        if (!pin) {
-          setShowPinReminder(true);
-        }
-      } catch (error) {
-        console.error("Error checking wallet PIN:", error);
-      }
-    };
-
-    checkWalletPin();
-  }, [userData]);
-
-  // Set up 5-minute interval for PIN reminder
-  useEffect(() => {
-    if (!walletPin || !showPinReminder) return;
-
-    const intervalId = setInterval(() => {
-      setShowPinReminder(true);
-    }, 5 * 60); // 5 minutes
-
-    return () => clearInterval(intervalId);
-  }, [walletPin]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -87,52 +50,11 @@ const DashboardLayout = ({ children }) => {
     <div className="min-h-screen bg-gray-100">
       <ToastContainer />
 
-      {/* PIN Reminder Modal */}
-      {showPinReminder && !walletPin && pathname !== "/dashboard/set-pin" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-end p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm animate-slide-in-right">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-4 flex items-center justify-between rounded-t-2xl">
-              <div className="flex items-center gap-3">
-                <FaLock className="w-5 h-5" />
-                <h3 className="text-lg font-bold">Secure Your Account</h3>
-              </div>
-              <button
-                onClick={() => setShowPinReminder(false)}
-                className="text-white hover:bg-white/20 p-1 rounded-lg transition"
-              >
-                <FaTimes className="w-5 h-5" />
-              </button>
-            </div>
 
-            {/* Body */}
-            <div className="px-6 py-6">
-              <p className="text-gray-700 mb-4">
-                Protect your wallet with a secure PIN. This adds an extra layer
-                of security to all your transactions.
-              </p>
-              <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded mb-6">
-                <p className="text-sm text-orange-800">
-                  <strong>Important:</strong> Setting a PIN is recommended for
-                  your account security.
-                </p>
-              </div>
-
-              {/* Button */}
-              <Link
-                href="/dashboard/set-pin"
-                className="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold py-3 rounded-lg text-center hover:shadow-lg transition-shadow"
-              >
-                Create PIN Now
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
 
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
@@ -150,9 +72,9 @@ const DashboardLayout = ({ children }) => {
         setOpenProducts={setOpenProducts}
       />
 
-      <div className="md:pl-64 flex flex-col min-h-screen">
-        {/* Mobile Header */}
-        <div className="bg-white md:hidden">
+      <div className="lg:pl-72 flex flex-col min-h-screen">
+        {/* Mobile/Tablet Header */}
+        <div className="bg-white lg:hidden">
           <div className="grid grid-cols-3 items-center p-4 border-b">
             <button
               onClick={() => setIsSidebarOpen(true)}
@@ -182,83 +104,153 @@ const DashboardLayout = ({ children }) => {
         </div>
 
         {/* Desktop Header */}
-        <div className="hidden md:block bg-white border-b">
+        <div className="hidden lg:block bg-white border-b">
           <div className="flex items-center justify-end p-2">
             <DateTime />
           </div>
         </div>
 
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8">{children}</main>
+        <main className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8">{children}</main>
 
-        {/* Mobile Bottom Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-30">
-          <div className="flex items-center justify-around px-4 py-2 relative">
-            {/* Dashboard */}
+        {/* Mobile/Tablet Bottom Navigation */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 pointer-events-none">
+          {/* Backdrop overlay for quick menu */}
+          <div
+            className={`fixed inset-0 bg-black/20 z-30 transition-opacity duration-300 ${
+              isQuickMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+            }`}
+            onClick={() => setIsQuickMenuOpen(false)}
+          />
+          
+          {/* Dark Blue Quick Action Popup Menu */}
+          <div
+            className={`absolute bottom-[85px] left-1/2 -translate-x-1/2 z-45 bg-[#051c72] text-white px-6 py-4 rounded-3xl shadow-2xl flex gap-6 items-center transition-all duration-300 ease-out origin-bottom ${
+              isQuickMenuOpen 
+                ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" 
+                : "opacity-0 translate-y-4 scale-95 pointer-events-none"
+            }`}
+          >
+            {/* Quick actions: Data, Airtime, Electricity, Cable */}
             <Link
-              href="/dashboard"
-              className="flex flex-col items-center justify-center py-2 px-3 text-gray-500 hover:text-blue-600 transition-colors"
+              href="/dashboard/services/data"
+              onClick={() => setIsQuickMenuOpen(false)}
+              className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                />
-              </svg>
-              <span className="text-xs mt-1">Dashboard</span>
+              <div className="w-14 h-14 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-colors">
+                <FaWifi className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-[11px] font-medium text-white/95">Data</span>
             </Link>
-            {/* Add Money - Center FAB */}
             <Link
-              href="/add-money"
-              className="flex flex-col items-center justify-center -mt-8"
+              href="/dashboard/services/airtime"
+              onClick={() => setIsQuickMenuOpen(false)}
+              className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
             >
-              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-full p-3 shadow-xl hover:shadow-2xl transition-all hover:scale-105">
-                <svg
-                  className="w-5 h-5 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 4v16m8-8H4"
-                  />
+              <div className="w-14 h-14 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-colors">
+                <FaPhone className="w-6 h-6 rotate-[90deg] text-white" />
+              </div>
+              <span className="text-[11px] font-medium text-white/95">Airtime</span>
+            </Link>
+            <Link
+              href="/dashboard/services/electric"
+              onClick={() => setIsQuickMenuOpen(false)}
+              className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+            >
+              <div className="w-14 h-14 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-colors">
+                <FaLightbulb className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-[11px] font-medium text-white/95">Electricity</span>
+            </Link>
+            <Link
+              href="/dashboard/services/cable"
+              onClick={() => setIsQuickMenuOpen(false)}
+              className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
+            >
+              <div className="w-14 h-14 bg-white/10 hover:bg-white/20 rounded-2xl flex items-center justify-center transition-colors">
+                <FaTv className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-[11px] font-medium text-white/95">Cable</span>
+            </Link>
+            {/* Triangle/notch pointer */}
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3.5 h-3.5 bg-[#051c72] rotate-45" />
+          </div>
+
+          {/* Bottom navigation bar */}
+          <div className="relative w-full h-[75px] flex items-end pointer-events-auto shadow-[0_-8px_30px_rgba(0,0,0,0.06)] bg-transparent">
+            {/* Curved cutout background */}
+            <div className="absolute inset-0 flex">
+              <div className="flex-1 bg-white h-full border-t border-gray-100" />
+              <div className="w-[120px] h-full relative bg-transparent flex justify-center">
+                {/* Dark blue circle behind the cutout */}
+                <div className="absolute -top-[12px] w-[74px] h-[74px] rounded-full bg-[#051c72] z-10 shadow-lg" />
+                {/* White SVG overlay */}
+                <svg className="absolute inset-0 w-full h-full text-white fill-current z-20" viewBox="0 0 120 75" preserveAspectRatio="none">
+                  <path d="M 0,0 L 23,0 C 35,0 40,48 60,48 C 80,48 85,0 97,0 L 120,0 L 120,75 L 0,75 Z" />
                 </svg>
               </div>
-              <span className="text-xs mt-2 text-gray-500">Add Money</span>
-            </Link>
+              <div className="flex-1 bg-white h-full border-t border-gray-100" />
+            </div>
 
-            {/* Orders */}
-            <Link
-              href="/dashboard/history/all-orders"
-              className="flex flex-col items-center justify-center py-2 px-3 text-gray-500 hover:text-blue-600 transition-colors"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-              <span className="text-xs mt-1">Orders</span>
-            </Link>
+            {/* Navigation buttons */}
+            <div className="relative w-full h-full z-30 flex items-center justify-between px-3 sm:px-6">
+              {/* Left Side Buttons */}
+              <div className="flex-1 flex justify-around">
+                <Link
+                  href="/dashboard"
+                  className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+                    pathname === "/dashboard" ? "text-blue-800" : "text-gray-400"
+                  }`}
+                >
+                  <FaHome className="w-5 h-5" />
+                  <span className="text-[10px] font-semibold">Dashboard</span>
+                </Link>
+                <Link
+                  href="/dashboard/history/all-orders"
+                  className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+                    pathname === "/dashboard/history/all-orders" ? "text-blue-800" : "text-gray-400"
+                  }`}
+                >
+                  <FaShoppingCart className="w-5 h-5" />
+                  <span className="text-[10px] font-semibold">Orders</span>
+                </Link>
+              </div>
+
+              {/* Central Floating Button */}
+              <div className="w-[120px] flex justify-center relative">
+                <button
+                  onClick={() => setIsQuickMenuOpen(!isQuickMenuOpen)}
+                  className="absolute -top-[2px] w-[54px] h-[54px] rounded-full bg-gradient-to-b from-[#5c8eff] via-[#2063f6] to-[#0c3cb3] shadow-[0_4px_15px_rgba(32,99,246,0.4)] hover:shadow-[0_6px_20px_rgba(32,99,246,0.6)] active:scale-95 transition-all duration-300 flex items-center justify-center overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent rounded-full h-[50%]" />
+                </button>
+              </div>
+
+              {/* Right Side Buttons */}
+              <div className="flex-1 flex justify-around">
+                <Link
+                  href="/dashboard/history/funding"
+                  className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+                    pathname === "/dashboard/history/funding" ? "text-blue-800" : "text-gray-400"
+                  }`}
+                >
+                  <FaExchangeAlt className="w-5 h-5" />
+                  <span className="text-[10px] font-semibold">Payments</span>
+                </Link>
+                <Link
+                  href="/dashboard/personal-details"
+                  className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+                    pathname === "/dashboard/personal-details" ? "text-blue-800" : "text-gray-400"
+                  }`}
+                >
+                  <FaCogs className="w-5 h-5" />
+                  <span className="text-[10px] font-semibold">Add Money</span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
 
       <style jsx>{`
         @keyframes slideInRight {

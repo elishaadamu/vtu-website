@@ -25,38 +25,6 @@ const DataPage = () => {
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");
-  const [pin, setPin] = useState(["", "", "", ""]);
-  const [showPin, setShowPin] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [walletLoading, setWalletLoading] = useState(false);
-  const [networksLoading, setNetworksLoading] = useState(false);
-  const [plans, setPlans] = useState([]);
-  const [networks, setNetworks] = useState([]);
-
-  // Create refs for PIN inputs
-  const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
-
-  // Handle PIN input change
-  const handlePinChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow digits
-
-    const newPin = [...pin];
-    newPin[index] = value;
-    setPin(newPin);
-
-    // Auto-focus next input
-    if (value && index < 3) {
-      pinRefs[index + 1].current?.focus();
-    }
-  };
-
-  // Handle keyboard navigation
-  const handleKeyDown = (index, e) => {
-    if (e.key === "Backspace" && !pin[index] && index > 0) {
-      pinRefs[index - 1].current?.focus();
-    }
-  };
-
   // Fetch wallet balance
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -163,7 +131,6 @@ const DataPage = () => {
       plan_code: selectedPlanId,
       userId,
       amount: selectedPlan.amount,
-      pin: pin.join(""),
     };
 
     try {
@@ -211,7 +178,6 @@ const DataPage = () => {
       setSelectedNetwork("");
       setPhoneNumber("");
       setSelectedPlanId("");
-      setPin(["", "", "", ""]);
       setPlans([]);
 
       // Refresh wallet balance
@@ -378,47 +344,6 @@ const DataPage = () => {
               <p className="text-xl font-bold text-purple-600">
                 ₦{selectedPlanDetails.amount}
               </p>
-            </div>
-          )}
-
-          {/* PIN Input */}
-          {selectedPlanId && (
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  4. Transaction PIN
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPin(!showPin)}
-                  className="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
-                >
-                  {showPin ? (
-                    <>
-                      <FaEyeSlash /> Hide PIN
-                    </>
-                  ) : (
-                    <>
-                      <FaEye /> Show PIN
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="flex gap-3 justify-center">
-                {pin.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={pinRefs[index]}
-                    type={showPin ? "text" : "password"}
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handlePinChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-14 h-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none"
-                    required
-                  />
-                ))}
-              </div>
             </div>
           )}
 

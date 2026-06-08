@@ -26,15 +26,10 @@ const ElectricPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
-  const [pin, setPin] = useState(["", "", "", ""]);
-  const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
-
-  // Create refs for PIN inputs
-  const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   // Nigerian Electricity Distribution Companies
   const discos = [
@@ -53,27 +48,6 @@ const ElectricPage = () => {
     { value: "prepaid", label: "Prepaid Meter" },
     { value: "postpaid", label: "Postpaid Meter" },
   ];
-
-  // Handle PIN input change
-  const handlePinChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow digits
-
-    const newPin = [...pin];
-    newPin[index] = value;
-    setPin(newPin);
-
-    // Auto-focus next input
-    if (value && index < 3) {
-      pinRefs[index + 1].current?.focus();
-    }
-  };
-
-  // Handle keyboard navigation
-  const handleKeyDown = (index, e) => {
-    if (e.key === "Backspace" && !pin[index] && index > 0) {
-      pinRefs[index - 1].current?.focus();
-    }
-  };
 
   // Fetch wallet balance
   useEffect(() => {
@@ -153,7 +127,6 @@ const ElectricPage = () => {
       amount: parseFloat(amount),
       phoneNumber,
       userId,
-      pin: pin.join(""),
     };
 
     console.log("Electric Bill Payment Payload:", payload);
@@ -178,7 +151,6 @@ const ElectricPage = () => {
         setPhoneNumber("");
         setCustomerName("");
         setCustomerAddress("");
-        setPin(["", "", "", ""]);
         setVerified(false);
 
         // Refresh wallet balance
@@ -412,46 +384,7 @@ const ElectricPage = () => {
             </div>
           )}
 
-          {/* PIN Input */}
-          {amount && phoneNumber && (
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  6. Transaction PIN
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPin(!showPin)}
-                  className="text-sm text-yellow-600 hover:text-yellow-700 font-medium flex items-center gap-1"
-                >
-                  {showPin ? (
-                    <>
-                      <FaEyeSlash /> Hide PIN
-                    </>
-                  ) : (
-                    <>
-                      <FaEye /> Show PIN
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="flex gap-3 justify-center">
-                {pin.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={pinRefs[index]}
-                    type={showPin ? "text" : "password"}
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handlePinChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-14 h-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-all outline-none"
-                    required
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+
 
           {/* Info Banner */}
           {amount && (
@@ -479,10 +412,9 @@ const ElectricPage = () => {
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading || !verified || !amount || !phoneNumber || pin.some(d => !d)}
+            disabled={loading || !verified || !amount || !phoneNumber}
             className="w-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-bold py-4 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Processing Payment..." : `Pay ₦${parseFloat(amount || 0).toLocaleString()}`}

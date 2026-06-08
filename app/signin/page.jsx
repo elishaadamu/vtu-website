@@ -16,22 +16,22 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 const page = () => {
   const router = useRouter();
   const { fetchUserData } = useAppContext();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [passcode, setPasscode] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPasscode, setShowPasscode] = useState(false);
 
   const handleSignin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters long.");
+    if (passcode.length < 6) {
+      toast.error("Passcode must be at least 6 characters long.");
       setLoading(false);
       return;
     }
 
-    const payload = { email, password };
+    const payload = { phone, passcode };
     console.log(payload);
     try {
       const response = await axios.post(
@@ -88,33 +88,33 @@ const page = () => {
         <p className="text-center font-semibold text-xl">Welcome back!</p>
         <h2 className="text-left text-gray-500">Signin as a User</h2>
         <div className="flex flex-col gap-1">
-          <label>Email</label>
+          <label>Phone Number</label>
           <input
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
+            onChange={(e) => setPhone(e.target.value)}
+            value={phone}
             className="border p-2 rounded-md"
-            type="email"
-            placeholder="Enter your email"
+            type="tel"
+            placeholder="Enter your phone number"
             required
           />
         </div>
         <div className="flex flex-col gap-1 relative">
-          <label>Password</label>
+          <label>Passcode</label>
           <input
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
+            onChange={(e) => setPasscode(e.target.value)}
+            value={passcode}
             className="border p-2 rounded-md pr-10"
-            type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
+            type={showPasscode ? "text" : "password"}
+            placeholder="Enter your passcode"
             required
             autoComplete="current-password"
           />
           <button
             type="button"
-            onClick={() => setShowPassword(!showPassword)}
+            onClick={() => setShowPasscode(!showPasscode)}
             className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 transition-colors"
           >
-            {showPassword ? (
+            {showPasscode ? (
               <FaEyeSlash className="w-5 h-5" />
             ) : (
               <FaEye className="w-5 h-5" />

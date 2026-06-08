@@ -30,16 +30,12 @@ const NinVerificationPage = () => {
   const [verificationMethod, setVerificationMethod] = useState("nin"); // 'nin' or 'phone'
   const [selectedSlip, setSelectedSlip] = useState("standard"); // 'regular', 'standard', 'premium'
   const [idNumber, setIdNumber] = useState("");
-  const [pin, setPin] = useState(["", "", "", ""]);
-  const [showPin, setShowPin] = useState(false);
   const [consent, setConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState(0);
   const [priceLoading, setPriceLoading] = useState(false);
   const [agentPrices, setAgentPrices] = useState([]);
-
-  const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   useEffect(() => {
     const fetchWalletBalance = async () => {
@@ -102,33 +98,10 @@ const NinVerificationPage = () => {
     fetchPrices();
   }, []);
 
-  const handlePinChange = (index, value) => {
-    if (value.length > 1) return; // Only allow 1 digit
-    const newPin = [...pin];
-    newPin[index] = value;
-    setPin(newPin);
-
-    // Auto-focus next input
-    if (value !== "" && index < 3) {
-      pinRefs[index + 1].current.focus();
-    }
-  };
-
-  const handleKeyDown = (index, e) => {
-    // Handle backspace to focus previous input
-    if (e.key === "Backspace" && pin[index] === "" && index > 0) {
-      pinRefs[index - 1].current.focus();
-    }
-  };
-
   const handleVerify = (e) => {
     e.preventDefault();
     if (!idNumber) {
       message.error("Please enter your ID Number");
-      return;
-    }
-    if (pin.some((p) => p === "")) {
-      message.error("Please enter your 4-digit PIN");
       return;
     }
     if (!consent) {
@@ -217,7 +190,6 @@ const NinVerificationPage = () => {
             slipLayout: selectedSlip,
             amount: slipAmount,
             userId,
-            pin: pin.join(""),
           };
 
           if (verificationMethod === "phone") {
@@ -260,7 +232,6 @@ const NinVerificationPage = () => {
 
           // Reset form
           setIdNumber("");
-          setPin(["", "", "", ""]);
           setConsent(false);
         } catch (error) {
           MySwal.fire({
@@ -461,43 +432,6 @@ const NinVerificationPage = () => {
               </div>
             </div>
 
-            {/* PIN Input */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-700">
-                  Transaction PIN
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPin(!showPin)}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-                >
-                  {showPin ? (
-                    <>
-                      <FaEyeSlash /> Hide PIN
-                    </>
-                  ) : (
-                    <>
-                      <FaEye /> Show PIN
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="flex gap-4 justify-center">
-                {pin.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={pinRefs[index]}
-                    type={showPin ? "text" : "password"}
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handlePinChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-14 h-14 text-center text-2xl font-bold bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
-                  />
-                ))}
-              </div>
-            </div>
 
             {/* Consent Checkbox */}
             <div className="bg-blue-50 p-4 rounded-xl flex items-start gap-3">

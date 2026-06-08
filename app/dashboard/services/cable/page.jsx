@@ -26,17 +26,12 @@ const CablePage = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [currentPackage, setCurrentPackage] = useState("");
-  const [pin, setPin] = useState(["", "", "", ""]);
-  const [showPin, setShowPin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
   const [packages, setPackages] = useState([]);
   const [packagesLoading, setPackagesLoading] = useState(false);
-
-  // Create refs for PIN inputs
-  const pinRefs = [useRef(null), useRef(null), useRef(null), useRef(null)];
 
   // Nigerian Cable TV Providers
   const providers = [
@@ -95,27 +90,6 @@ const CablePage = () => {
       { id: "showmax-standard", name: "Standard", price: 2900, duration: "Monthly" },
       { id: "showmax-pro", name: "Pro", price: 4400, duration: "Monthly" },
     ],
-  };
-
-  // Handle PIN input change
-  const handlePinChange = (index, value) => {
-    if (!/^\d*$/.test(value)) return; // Only allow digits
-
-    const newPin = [...pin];
-    newPin[index] = value;
-    setPin(newPin);
-
-    // Auto-focus next input
-    if (value && index < 3) {
-      pinRefs[index + 1].current?.focus();
-    }
-  };
-
-  // Handle keyboard navigation
-  const handleKeyDown = (index, e) => {
-    if (e.key === "Backspace" && !pin[index] && index > 0) {
-      pinRefs[index - 1].current?.focus();
-    }
   };
 
   // Fetch wallet balance
@@ -215,7 +189,6 @@ const CablePage = () => {
       amount: selectedPkg.price,
       phoneNumber,
       userId,
-      pin: pin.join(""),
     };
 
     console.log("Cable Subscription Payload:", payload);
@@ -239,7 +212,6 @@ const CablePage = () => {
         setPhoneNumber("");
         setCustomerName("");
         setCurrentPackage("");
-        setPin(["", "", "", ""]);
         setVerified(false);
         setPackages([]);
 
@@ -482,46 +454,7 @@ const CablePage = () => {
             </div>
           )}
 
-          {/* PIN Input */}
-          {selectedPackage && phoneNumber && (
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-slate-700">
-                  5. Transaction PIN
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPin(!showPin)}
-                  className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center gap-1"
-                >
-                  {showPin ? (
-                    <>
-                      <FaEyeSlash /> Hide PIN
-                    </>
-                  ) : (
-                    <>
-                      <FaEye /> Show PIN
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="flex gap-3 justify-center">
-                {pin.map((digit, index) => (
-                  <input
-                    key={index}
-                    ref={pinRefs[index]}
-                    type={showPin ? "text" : "password"}
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handlePinChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-14 h-14 text-center text-2xl font-bold bg-slate-50 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all outline-none"
-                    required
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+
 
           {/* Info Banner */}
           {selectedPackageDetails && (
@@ -553,10 +486,9 @@ const CablePage = () => {
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading || !verified || !selectedPackage || !phoneNumber || pin.some(d => !d)}
+            disabled={loading || !verified || !selectedPackage || !phoneNumber}
             className="w-full bg-gradient-to-r from-red-500 to-rose-500 text-white font-bold py-4 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Processing Subscription..." : selectedPackageDetails ? `Subscribe for ₦${selectedPackageDetails.price.toLocaleString()}` : "Subscribe Now"}

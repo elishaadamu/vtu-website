@@ -59,7 +59,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
     <aside
       className={`fixed inset-y-0 left-0 z-50 w-72 bg-gray-800 text-white transform transition-transform duration-300 ease-in-out ${
         isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-      } md:translate-x-0`}
+      } lg:translate-x-0`}
     >
       <div className="flex flex-col h-full">
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
@@ -73,7 +73,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
             </Link>
           </div>
           <button
-            className="p-2 rounded-md hover:bg-gray-700 md:hidden"
+            className="p-2 rounded-md hover:bg-gray-700 lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           >
             <svg

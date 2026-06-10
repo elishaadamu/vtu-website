@@ -20,7 +20,7 @@ import {
   FaSearch,
 } from "react-icons/fa";
 import Image from "next/image";
-import Logo from "@/assets/logo/logo-no-bg-1.png";
+import Logo from "@/assets/logo/sm-data.png";
 import { decryptData } from "@/lib/encryption";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
@@ -65,10 +65,10 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, handleLogout }) => {
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="flex items-center gap-2">
-              <Image src={Logo} alt="Logo" className="w-12 h-auto" />
+              <Image src={Logo} alt="Logo" className="w-12  h-12 rounded-full" />
               <h2 className="text-xl font-bold text-white italic">
-                <span className="text-blue-500">MISAL</span>
-                <span className="text-orange-500">SUB</span>
+                <span className="text-blue-500">SM</span>
+                <span className="text-yellow-500">DATA</span>
               </h2>
             </Link>
           </div>

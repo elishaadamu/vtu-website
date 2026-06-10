@@ -22,6 +22,8 @@ import { MdSignalCellularAlt } from "react-icons/md";
 const DataPage = () => {
   const { userData } = useAppContext();
   const [walletBalance, setWalletBalance] = useState(0);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");

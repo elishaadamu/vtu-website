@@ -20,6 +20,8 @@ import {
 const AirtimePage = () => {
   const { userData } = useAppContext();
   const [walletBalance, setWalletBalance] = useState(0);
+  const [walletLoading, setWalletLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [network, setNetwork] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [amount, setAmount] = useState("");

@@ -24,6 +24,9 @@ const DataPage = () => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [walletLoading, setWalletLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [networks, setNetworks] = useState([]);
+  const [networksLoading, setNetworksLoading] = useState(false);
+  const [plans, setPlans] = useState([]);
   const [selectedNetwork, setSelectedNetwork] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState("");

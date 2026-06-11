@@ -102,7 +102,7 @@ const services = [
 ];
 
 const stats = [
-  { value: "500K+", label: "Happy Users", icon: Users },
+  { value: "100k+", label: "Happy Users", icon: Users },
   { value: "99.9%", label: "Uptime", icon: Zap },
   { value: "24/7", label: "Support", icon: Headphones },
   { value: "4+", label: "Networks", icon: Globe },
@@ -469,7 +469,7 @@ const LandingHome = () => {
                 {/* Bottom text overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-6">
                   <p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-                    Trusted by 500K+ users
+                    Trusted by 100K+ users
                   </p>
                   <p className="mt-1 text-lg font-bold text-white">
                     Fast. Reliable. Affordable.

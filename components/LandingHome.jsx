@@ -280,18 +280,18 @@ const LandingHome = () => {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2 sm:gap-3">
             <Image
               src={Logo}
               alt="SM Data"
-              className="h-11 w-11 rounded-xl object-contain"
+              className="h-8 w-8 sm:h-11 sm:w-11 rounded-lg sm:rounded-xl object-contain"
               priority
             />
             <div className="flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-slate-950">
+              <span className="text-base sm:text-lg font-bold tracking-tight text-slate-950">
                 SM Data
               </span>
-              <span className="text-[10px] font-medium uppercase tracking-widest text-emerald-600">
+              <span className="text-[8px] sm:text-[10px] font-medium uppercase tracking-widest text-emerald-600">
                 VTU Platform
               </span>
             </div>
@@ -333,10 +333,10 @@ const LandingHome = () => {
             </Link>
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:shadow-xl hover:shadow-emerald-600/30 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-1 sm:gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-3 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:shadow-xl hover:shadow-emerald-600/30 hover:-translate-y-0.5"
             >
               Get Started
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />
             </Link>
 
             {/* Mobile menu button */}

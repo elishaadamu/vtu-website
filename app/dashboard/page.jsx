@@ -309,7 +309,7 @@ const ServicesLayout = () => {
           </div> */}
 
           {/* Wallet Carousel Section */}
-          {accountDetails ? (
+          {accountDetails?.virtualAccountNumber ? (
             <div className="mb-6 lg:mb-8">
               <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-2xl shadow-lg p-5 relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 rounded-full opacity-20 -mr-16 -mt-16"></div>

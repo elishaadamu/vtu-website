@@ -1,13 +1,10 @@
 "use client";
-import { Outfit } from "next/font/google";
 import "./globals.css";
 import { AppContextProvider } from "@/context/AppContext";
 import { ToastContainer } from "react-toastify";
 import Navbar from "@/components/Navbar"; // Import Navbar
 import Footer from "@/components/Footer"; // Import Footer
 import { usePathname } from "next/navigation";
-
-const outfit = Outfit({ subsets: ["latin"], weight: ["300", "400", "500"] });
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -30,7 +27,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={`${outfit.className} antialiased text-gray-700`}>
+      <body className="antialiased text-gray-700">
         <ToastContainer />
         <AppContextProvider>
           {!isSpecialRoute && <Navbar />}

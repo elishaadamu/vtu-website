@@ -1,28 +1,27 @@
-import React from "react";
-import Signin from "@/app/signin/page";
+import LandingHome from "@/components/LandingHome";
 
 export const metadata = {
-  title: "Dashboard - VTU Services | Data, Airtime, Bills Payment",
+  title: "SM Data | VTU, Airtime, Data & Bills Payment",
   description:
-    "Access all your VTU services in one place. Buy data, airtime, pay electricity bills, cable TV subscriptions, and verify BVN/NIN. Fast, secure, and reliable.",
+    "Buy data, recharge airtime, pay electricity and cable TV bills, and access BVN/NIN services from one secure VTU platform.",
   keywords:
-    "VTU, data bundle, airtime, electricity bill, cable TV, DSTV, GOTV, Startimes, BVN verification, NIN slip, mobile recharge",
+    "SM Data, VTU, data bundle, airtime recharge, electricity bill, cable TV, BVN, NIN, Nigeria",
   openGraph: {
     type: "website",
-    title: "Dashboard - VTU Services | Data, Airtime, Bills Payment",
+    title: "SM Data | VTU, Airtime, Data & Bills Payment",
     description:
-      "Access all your VTU services in one place. Buy data, airtime, pay bills, and more.",
+      "A dependable VTU platform for data, airtime, bill payments, and identity services.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dashboard - VTU Services",
+    title: "SM Data | VTU Services",
     description:
-      "Access all your VTU services in one place. Buy data, airtime, pay bills, and more.",
+      "Buy data, airtime, pay bills, and manage daily digital services from one dashboard.",
   },
 };
 
 const Home = () => {
-  return <Signin />;
+  return <LandingHome />;
 };
 
 export default Home;

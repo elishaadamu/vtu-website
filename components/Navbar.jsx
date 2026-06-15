@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import Logo from "@/assets/logo/sm-data.png";
+import Logo from "@/assets/logo/logo.jpeg";
 import Link from "next/link";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
@@ -16,7 +16,7 @@ const Navbar = () => {
           className="cursor-pointer w-[140px] md:w-[180px]"
           onClick={() => router.push("/")}
           src={Logo}
-          alt="SM Data"
+          alt="MISAL SUB"
         />
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-x-4 md:gap-x-6">

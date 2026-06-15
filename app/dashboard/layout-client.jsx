@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { decryptData } from "../../lib/encryption";
-import Logo from "@/assets/logo/sm-data.png";
+import Logo from "@/assets/logo/logo.jpeg";
 import axios from "axios";
 import { apiUrl, API_CONFIG } from "@/configs/api";
 import { ToastContainer, toast } from "react-toastify";
@@ -75,10 +75,10 @@ const DashboardLayout = ({ children }) => {
       <div className="lg:pl-72 flex flex-col min-h-screen">
         {/* Mobile/Tablet Header */}
         <div className="bg-white lg:hidden">
-          <div className="grid grid-cols-3 items-center p-4 border-b">
+          <div className="flex items-center justify-between p-4 border-b">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="p-2 rounded-md hover:bg-gray-100 justify-self-start"
+              className="p-2 rounded-md hover:bg-gray-100"
             >
               <svg
                 className="w-6 h-6"
@@ -94,19 +94,19 @@ const DashboardLayout = ({ children }) => {
                 />
               </svg>
             </button>
-            <Link href={"/"} className="justify-self-center">
-              <Image className="w-[3rem]" src={Logo} alt="MISAL SUB" />
+            <Link href={"/"}>
+              <Image className="w-20 h-20 object-contain" src={Logo} alt="MISALSUB" />
             </Link>
-            <div className="scale-75 origin-right justify-self-end">
-              <DateTime />
-            </div>
           </div>
         </div>
 
         {/* Desktop Header */}
         <div className="hidden lg:block bg-white border-b">
-          <div className="flex items-center justify-end p-2">
-            <DateTime />
+          <div className="flex items-center justify-between p-4">
+            <div className="text-xl font-bold">Dashboard</div>
+            <Link href={"/"}>
+              <Image className="w-20 h-20 object-contain" src={Logo} alt="MISALSUB" />
+            </Link>
           </div>
         </div>
 

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import Logo from "@/assets/logo/sm-data.png";
+import Logo from "@/assets/logo/logo.jpeg";
 import HappyWoman from "@/assets/happy-woman.png";
 import MtnLogo from "@/assets/mtn-logo.jpg";
 import NineMobileLogo from "@/assets/9mobile.png";
@@ -136,7 +136,7 @@ const faqs = [
       "Click 'Get Started' or 'Sign Up' at the top right. Provide your email, phone number, and password. You'll receive a verification code via SMS to confirm your account.",
   },
   {
-    question: "Is it safe to buy data and airtime with SM Data?",
+    question: "Is it safe to buy data and airtime with MISALSUB?",
     answer:
       "Yes! We use encrypted transactions and secure payment processing. Your wallet and personal data are protected with industry-standard security protocols.",
   },
@@ -151,7 +151,7 @@ const faqs = [
       "We accept all major debit and credit cards, bank transfers, and USSD. Fund your wallet using any method that works best for you.",
   },
   {
-    question: "Can I use SM Data as an agent or reseller?",
+    question: "Can I use MISALSUB as an agent or reseller?",
     answer:
       "Absolutely! We have dedicated agent and business plans. Sign in with your agent credentials or contact support to set up your business account.",
   },
@@ -166,19 +166,19 @@ const testimonials = [
   {
     name: "Adebayo O.",
     role: "Business Owner",
-    text: "SM Data has transformed how I manage my telecom business. The agent panel is incredibly efficient!",
+    text: "MISALSUB has transformed how I manage my telecom business. The agent panel is incredibly efficient!",
     rating: 5,
   },
   {
     name: "Chioma N.",
     role: "Student",
-    text: "I save so much on data bundles using SM Data. The prices are unbeatable and delivery is always instant.",
+    text: "I save so much on data bundles using MISALSUB. The prices are unbeatable and delivery is always instant.",
     rating: 5,
   },
   {
     name: "Ibrahim M.",
     role: "Freelancer",
-    text: "From electricity bills to cable TV, SM Data handles everything I need. One platform for all my payments!",
+    text: "From electricity bills to cable TV, MISALSUB handles everything I need. One platform for all my payments!",
     rating: 5,
   },
 ];
@@ -283,13 +283,13 @@ const LandingHome = () => {
           <Link href="/" className="flex items-center gap-2 sm:gap-3">
             <Image
               src={Logo}
-              alt="SM Data"
+              alt="MISALSUB"
               className="h-8 w-8 sm:h-11 sm:w-11 rounded-lg sm:rounded-xl object-contain"
               priority
             />
             <div className="flex flex-col">
               <span className="text-base sm:text-lg font-bold tracking-tight text-slate-950">
-                SM Data
+                MISALSUB
               </span>
               <span className="text-[8px] sm:text-[10px] font-medium uppercase tracking-widest text-emerald-600">
                 VTU Platform
@@ -308,7 +308,7 @@ const LandingHome = () => {
               href="#why-us"
               className="transition-colors hover:text-emerald-600"
             >
-              Why SM Data
+              Why MISALSUB
             </a>
             <a
               href="#testimonials"
@@ -357,7 +357,7 @@ const LandingHome = () => {
         {mobileMenuOpen && (
           <div className="border-t border-slate-200/60 bg-white/95 backdrop-blur-xl md:hidden">
             <nav className="flex flex-col gap-1 px-4 py-3">
-              {["Services", "Why SM Data", "Reviews", "FAQ"].map((item) => (
+              {["Services", "Why MISALSUB", "Reviews", "FAQ"].map((item) => (
                 <a
                   key={item}
                   href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
@@ -402,7 +402,7 @@ const LandingHome = () => {
             </h1>
 
             <p className="mt-6 max-w-lg text-base leading-relaxed text-slate-600 sm:text-lg">
-              SM Data gives individuals, agents, and growing teams a simple
+              MISALSUB gives individuals, agents, and growing teams a simple
               place to recharge phones, manage subscriptions, and settle
               utilities — all from one powerful platform.
             </p>
@@ -459,7 +459,7 @@ const LandingHome = () => {
               <div className="relative overflow-hidden rounded-3xl shadow-2xl shadow-slate-900/15 animate-pulse-glow">
                 <Image
                   src={HappyWoman}
-                  alt="Happy woman using SM Data for VTU services"
+                  alt="Happy woman using MISALSUB for VTU services"
                   className="h-full w-full object-cover"
                   priority
                 />
@@ -721,12 +721,12 @@ const LandingHome = () => {
                       <div className="flex items-center gap-3">
                         <Image
                           src={Logo}
-                          alt="SM Data"
+                          alt="MISALSUB"
                           className="h-11 w-11 rounded-xl bg-white/90 object-contain p-1"
                         />
                         <div>
                           <p className="text-sm font-semibold text-emerald-100">
-                            SM Data Wallet
+                            MISALSUB Wallet
                           </p>
                           <p className="text-xs text-white/40">
                             Ready for purchase
@@ -836,7 +836,7 @@ const LandingHome = () => {
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-base text-slate-500">
               From students managing their data to business owners paying
-              utilities daily, SM Data simplifies digital payments for everyone.
+              utilities daily, MISALSUB simplifies digital payments for everyone.
             </p>
           </div>
 
@@ -913,7 +913,7 @@ const LandingHome = () => {
               <span className="gradient-text">We've got answers</span>
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-base text-slate-500">
-              Everything you need to know about SM Data and our VTU services.
+              Everything you need to know about MISALSUB and our VTU services.
             </p>
           </div>
 
@@ -961,7 +961,7 @@ const LandingHome = () => {
               <span className="text-emerald-400">bill payments</span> today.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/60">
-              Join thousands of Nigerians who trust SM Data for all their VTU
+              Join thousands of Nigerians who trust MISALSUB for all their VTU
               needs. Agents and business teams can use their dedicated sign-in
               paths as the platform grows.
             </p>
@@ -995,12 +995,12 @@ const LandingHome = () => {
               <div className="flex items-center gap-3">
                 <Image
                   src={Logo}
-                  alt="SM Data"
+                  alt="MISALSUB"
                   className="h-11 w-11 rounded-xl object-contain"
                 />
                 <div>
                   <span className="text-lg font-bold text-slate-950">
-                    SM Data
+                    MISALSUB
                   </span>
                   <p className="text-[10px] font-medium uppercase tracking-widest text-emerald-600">
                     VTU Platform
@@ -1075,7 +1075,7 @@ const LandingHome = () => {
 
           <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-8 sm:flex-row">
             <p className="text-sm text-slate-400">
-              © {new Date().getFullYear()} SM Data. All rights reserved.
+              © {new Date().getFullYear()} MISALSUB. All rights reserved.
             </p>
             <div className="flex items-center gap-2 text-xs text-slate-400">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />

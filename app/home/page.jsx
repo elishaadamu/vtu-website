@@ -1,9 +1,9 @@
 import LandingHome from "@/components/LandingHome";
 
 export const metadata = {
-  title: "Home | SM Data",
+  title: "Home | MISAL SUB",
   description:
-    "SM Data home page for VTU, airtime, data bundles, bills payment, and identity services.",
+    "MISAL SUB home page for VTU, airtime, data bundles, bills payment, and identity services.",
 };
 
 const HomePage = () => {
